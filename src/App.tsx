@@ -52,7 +52,7 @@ function App() {
 	const [userId, setUserId] = useState(0);
 	const [showLogin, setShowLogin] = useState(false);
 	const [selectedGame, setSelectedGame] = useState<number | null>(null);
-
+	console.log(showLogin);
 	// Atallos de teclado
 	useEffect(() => {
 		const handleKeyDown = (event: KeyboardEvent) => {
