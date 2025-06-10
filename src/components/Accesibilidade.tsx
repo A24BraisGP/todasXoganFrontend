@@ -25,7 +25,7 @@ const Accesibilidade = () => {
 		const fetchAccesibilidades = async () => {
 			try {
 				const response = await axios.get(
-					'http://localhost:8000/api/accesibilidades/'
+					'https://restapitodasxogan.onrender.com/api/accesibilidades/'
 				);
 				setAccesibilidades(response.data);
 			} catch (error) {

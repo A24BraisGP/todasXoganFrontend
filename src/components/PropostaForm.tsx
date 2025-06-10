@@ -119,9 +119,15 @@ const PropostaForm = () => {
 			try {
 				const [xenerosRes, plataformasRes, accesibilidadesRes] =
 					await Promise.all([
-						axios.get('http://localhost:8000/api/xeneros/'),
-						axios.get('http://localhost:8000/api/plataformas/'),
-						axios.get('http://localhost:8000/api/accesibilidades/'),
+						axios.get(
+							'https://restapitodasxogan.onrender.com/api/xeneros/'
+						),
+						axios.get(
+							'https://restapitodasxogan.onrender.com/api/plataformas/'
+						),
+						axios.get(
+							'https://restapitodasxogan.onrender.com/api/accesibilidades/'
+						),
 					]);
 
 				setXeneros(xenerosRes.data);
@@ -249,7 +255,7 @@ const PropostaForm = () => {
 			}
 
 			const response = await axios.post(
-				'http://localhost:8000/api/propostas/',
+				'https://restapitodasxogan.onrender.com/api/propostas/',
 				formDataToSend,
 				{
 					headers: {

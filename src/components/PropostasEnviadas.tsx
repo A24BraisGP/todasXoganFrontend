@@ -47,7 +47,7 @@ const PropostasEnviadas = () => {
 	const cargarPropostas = async () => {
 		try {
 			const response = await axios.get<Proposta[]>(
-				'http://localhost:8000/api/propostas/'
+				'https://restapitodasxogan.onrender.com/api/propostas/'
 			);
 			setPropostas(response.data);
 
@@ -60,7 +60,7 @@ const PropostasEnviadas = () => {
 			for (const id of userIds) {
 				try {
 					const userResponse = await axios.get<Usuario>(
-						`http://localhost:8000/api/usuarios/${id}/`
+						`https://restapitodasxogan.onrender.com/api/usuarios/${id}/`
 					);
 					usuariosTemp[id] = userResponse.data.nome;
 				} catch (err) {
@@ -94,7 +94,7 @@ const PropostasEnviadas = () => {
 			console.log('Datos a crear:', juegoData);
 
 			await axios.post(
-				'http://localhost:8000/api/videoxogos/',
+				'https://restapitodasxogan.onrender.com/api/videoxogos/',
 				juegoData,
 				{
 					headers: {
@@ -105,7 +105,7 @@ const PropostasEnviadas = () => {
 
 			// Actualizar el estado de la propuesta a APROBADA
 			const response = await axios.patch(
-				`http://localhost:8000/api/propostas/${proposta.id}/`,
+				`https://restapitodasxogan.onrender.com/api/propostas/${proposta.id}/`,
 				{ estado: ESTADO_PROPOSITA.APROBADA },
 				{
 					headers: {
@@ -134,7 +134,7 @@ const PropostasEnviadas = () => {
 	const handleRechazar = async (propostaId: number) => {
 		try {
 			const response = await axios.patch(
-				`http://localhost:8000/api/propostas/${propostaId}/`,
+				`https://restapitodasxogan.onrender.com/api/propostas/${propostaId}/`,
 				{ estado: ESTADO_PROPOSITA.REXEITADA },
 				{
 					headers: {

@@ -49,7 +49,7 @@ const Login = ({ onLogin }: LoginProps) => {
 		e.preventDefault();
 		try {
 			const loginResponse = await axios.post(
-				'http://localhost:8000/api/usuarios/login/',
+				'https://restapitodasxogan.onrender.com/api/usuarios/login/',
 				{
 					nome: nome,
 					contrasinal: password,
@@ -103,7 +103,7 @@ const Login = ({ onLogin }: LoginProps) => {
 
 		try {
 			const checkUserResponse = await axios.get(
-				`http://localhost:8000/api/usuarios/check-nome/${nome}/`
+				`https://restapitodasxogan.onrender.com/api/usuarios/check-nome/${nome}/`
 			);
 
 			if (checkUserResponse.data.exists) {
@@ -130,7 +130,7 @@ const Login = ({ onLogin }: LoginProps) => {
 			});
 
 			const response = await axios.post(
-				'http://localhost:8000/api/usuarios/',
+				'https://restapitodasxogan.onrender.com/api/usuarios/',
 				formData,
 				{
 					headers: {

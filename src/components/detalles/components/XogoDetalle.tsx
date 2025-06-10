@@ -36,13 +36,13 @@ const XogoDetalle = ({ xogoId, onVolver }: XogoDetalleProps) => {
 			try {
 				// Cargar el juego
 				const xogoResponse = await axios.get(
-					`http://localhost:8000/api/videoxogos/${xogoId}/`
+					`https://restapitodasxogan.onrender.com/api/videoxogos/${xogoId}/`
 				);
 				setXogo(xogoResponse.data);
 
 				// Cargar todas las plataformas
 				const plataformasResponse = await axios.get(
-					'http://localhost:8000/api/plataformas/'
+					'https://restapitodasxogan.onrender.com/api/plataformas/'
 				);
 				setPlataformas(plataformasResponse.data);
 			} catch (error) {

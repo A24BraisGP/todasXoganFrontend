@@ -89,7 +89,7 @@ function App() {
 	useEffect(() => {
 		// Petición para obtelos videoxogos
 		axios
-			.get('http://localhost:8000/api/videoxogos/')
+			.get('https://restapitodasxogan.onrender.com/api/videoxogos/')
 			.then((response) => setXogos(response.data))
 			.catch((error) => console.error('Error:', error));
 
@@ -103,7 +103,9 @@ function App() {
 			setUserId(userId);
 			// Petición sobre o usuario específico se xa existe no local storage
 			axios
-				.get(`http://localhost:8000/api/usuarios/${userId}/`)
+				.get(
+					`https://restapitodasxogan.onrender.com/api/usuarios/${userId}/`
+				)
 				.then((response) => {
 					setUsers([response.data]);
 				})
@@ -156,13 +158,16 @@ function App() {
 		try {
 			if (isFavorito) {
 				await axios.delete(
-					`http://localhost:8000/api/favoritos/delete/?usuario=${userId}&videoxogo=${xogoId}`
+					`https://restapitodasxogan.onrender.com/api/favoritos/delete/?usuario=${userId}&videoxogo=${xogoId}`
 				);
 			} else {
-				await axios.post(`http://localhost:8000/api/favoritos/`, {
-					usuario: userId,
-					videoxogo: xogoId,
-				});
+				await axios.post(
+					`https://restapitodasxogan.onrender.com/api/favoritos/`,
+					{
+						usuario: userId,
+						videoxogo: xogoId,
+					}
+				);
 			}
 
 			const newFavoritos = isFavorito
