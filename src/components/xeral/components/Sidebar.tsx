@@ -1,0 +1,61 @@
+import React from 'react';
+
+interface SidebarProps {
+	tab: string;
+	onClick: (tab: string) => void;
+	isLoggedIn: boolean;
+}
+
+const Sidebar: React.FC<SidebarProps> = ({ tab, onClick, isLoggedIn }) => {
+	const tabs = [
+		{ id: 'inicio', label: 'Inicio', icon: '🏠' },
+		{ id: 'catalogo', label: 'Catálogo', icon: '🎮' },
+		{ id: 'accesibilidade', label: 'Accesibilidade', icon: '♿' },
+	];
+
+	if (isLoggedIn) {
+		tabs.push(
+			{ id: 'perfil', label: 'Perfil', icon: '👤' },
+			{ id: 'propostas', label: 'Propostas', icon: '📝' }
+		);
+	}
+
+	const handleKeyDown = (e: React.KeyboardEvent, tabId: string) => {
+		if (e.key === 'Enter' || e.key === ' ') {
+			e.preventDefault();
+			onClick(tabId);
+		}
+	};
+
+	return (
+		<aside
+			className="w-64 min-h-full bg-base-200 text-base-content p-4"
+			role="navigation"
+			aria-label="Menú principal"
+		>
+			<ul className="menu" role="menubar">
+				{tabs.map((t) => (
+					<li key={t.id} role="none">
+						<a
+							role="menuitem"
+							tabIndex={0}
+							className={`flex items-center gap-2 ${
+								tab === t.id ? 'active' : ''
+							}`}
+							onClick={() => onClick(t.id)}
+							onKeyDown={(e) => handleKeyDown(e, t.id)}
+							aria-current={tab === t.id ? 'page' : undefined}
+						>
+							<span className="text-xl" aria-hidden="true">
+								{t.icon}
+							</span>
+							{t.label}
+						</a>
+					</li>
+				))}
+			</ul>
+		</aside>
+	);
+};
+
+export default Sidebar;
