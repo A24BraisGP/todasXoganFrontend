@@ -57,14 +57,27 @@ const Catalogo: React.FC<CatalogoProps> = ({
 			try {
 				// Cargar xeneros da api para facelo dinámico
 				const xenerosResponse = await axios.get(
-					'https://restapitodasxogan.onrender.com/api/xeneros/'
+					'https://restapitodasxogan.onrender.com/api/xeneros/',
+					{
+						headers: {
+							'Content-Type': 'application/json',
+							Accept: 'application/json',
+						},
+						withCredentials: true,
+					}
 				);
 				setXeneros(xenerosResponse.data);
 
 				// Cargar plataformas da api para facelo dinámico
-
 				const plataformasResponse = await axios.get(
-					'https://restapitodasxogan.onrender.com/api/plataformas/'
+					'https://restapitodasxogan.onrender.com/api/plataformas/',
+					{
+						headers: {
+							'Content-Type': 'application/json',
+							Accept: 'application/json',
+						},
+						withCredentials: true,
+					}
 				);
 				setPlataformas(plataformasResponse.data);
 			} catch (error) {

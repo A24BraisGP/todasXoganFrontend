@@ -7,7 +7,7 @@ import { z } from 'zod';
 const registerSchema = z.object({
 	nome: z
 		.string()
-		.min(1, { message: 'O nome é obligatorio.' })
+		.min(1, { message: 'O nome é obrigatorio.' })
 		.max(100, { message: 'O nome é demasiado longo.' }),
 	email: z
 		.string()
@@ -57,7 +57,9 @@ const Login = ({ onLogin }: LoginProps) => {
 				{
 					headers: {
 						'Content-Type': 'application/json',
+						Accept: 'application/json',
 					},
+					withCredentials: true,
 				}
 			);
 
@@ -103,7 +105,14 @@ const Login = ({ onLogin }: LoginProps) => {
 
 		try {
 			const checkUserResponse = await axios.get(
-				`https://restapitodasxogan.onrender.com/api/usuarios/check-nome/${nome}/`
+				`https://restapitodasxogan.onrender.com/api/usuarios/check-nome/${nome}/`,
+				{
+					headers: {
+						'Content-Type': 'application/json',
+						Accept: 'application/json',
+					},
+					withCredentials: true,
+				}
 			);
 
 			if (checkUserResponse.data.exists) {
@@ -135,7 +144,9 @@ const Login = ({ onLogin }: LoginProps) => {
 				{
 					headers: {
 						'Content-Type': 'multipart/form-data',
+						Accept: 'application/json',
 					},
+					withCredentials: true,
 				}
 			);
 

@@ -120,13 +120,34 @@ const PropostaForm = () => {
 				const [xenerosRes, plataformasRes, accesibilidadesRes] =
 					await Promise.all([
 						axios.get(
-							'https://restapitodasxogan.onrender.com/api/xeneros/'
+							'https://restapitodasxogan.onrender.com/api/xeneros/',
+							{
+								headers: {
+									'Content-Type': 'application/json',
+									Accept: 'application/json',
+								},
+								withCredentials: true,
+							}
 						),
 						axios.get(
-							'https://restapitodasxogan.onrender.com/api/plataformas/'
+							'https://restapitodasxogan.onrender.com/api/plataformas/',
+							{
+								headers: {
+									'Content-Type': 'application/json',
+									Accept: 'application/json',
+								},
+								withCredentials: true,
+							}
 						),
 						axios.get(
-							'https://restapitodasxogan.onrender.com/api/accesibilidades/'
+							'https://restapitodasxogan.onrender.com/api/accesibilidades/',
+							{
+								headers: {
+									'Content-Type': 'application/json',
+									Accept: 'application/json',
+								},
+								withCredentials: true,
+							}
 						),
 					]);
 
@@ -260,7 +281,9 @@ const PropostaForm = () => {
 				{
 					headers: {
 						'Content-Type': 'multipart/form-data',
+						Accept: 'application/json',
 					},
+					withCredentials: true,
 				}
 			);
 

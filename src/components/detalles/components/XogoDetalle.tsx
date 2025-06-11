@@ -36,13 +36,27 @@ const XogoDetalle = ({ xogoId, onVolver }: XogoDetalleProps) => {
 			try {
 				// Cargar el juego
 				const xogoResponse = await axios.get(
-					`https://restapitodasxogan.onrender.com/api/videoxogos/${xogoId}/`
+					`https://restapitodasxogan.onrender.com/api/videoxogos/${xogoId}/`,
+					{
+						headers: {
+							'Content-Type': 'application/json',
+							Accept: 'application/json',
+						},
+						withCredentials: true,
+					}
 				);
 				setXogo(xogoResponse.data);
 
 				// Cargar todas las plataformas
 				const plataformasResponse = await axios.get(
-					'https://restapitodasxogan.onrender.com/api/plataformas/'
+					'https://restapitodasxogan.onrender.com/api/plataformas/',
+					{
+						headers: {
+							'Content-Type': 'application/json',
+							Accept: 'application/json',
+						},
+						withCredentials: true,
+					}
 				);
 				setPlataformas(plataformasResponse.data);
 			} catch (error) {

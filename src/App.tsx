@@ -89,7 +89,13 @@ function App() {
 	useEffect(() => {
 		// Petición para obtelos videoxogos
 		axios
-			.get('https://restapitodasxogan.onrender.com/api/videoxogos/')
+			.get('https://restapitodasxogan.onrender.com/api/videoxogos/', {
+				headers: {
+					'Content-Type': 'application/json',
+					Accept: 'application/json',
+				},
+				withCredentials: true,
+			})
 			.then((response) => setXogos(response.data))
 			.catch((error) => console.error('Error:', error));
 
@@ -104,7 +110,14 @@ function App() {
 			// Petición sobre o usuario específico se xa existe no local storage
 			axios
 				.get(
-					`https://restapitodasxogan.onrender.com/api/usuarios/${userId}/`
+					`https://restapitodasxogan.onrender.com/api/usuarios/${userId}/`,
+					{
+						headers: {
+							'Content-Type': 'application/json',
+							Accept: 'application/json',
+						},
+						withCredentials: true,
+					}
 				)
 				.then((response) => {
 					setUsers([response.data]);

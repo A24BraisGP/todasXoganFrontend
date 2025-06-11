@@ -47,7 +47,14 @@ const PropostasEnviadas = () => {
 	const cargarPropostas = async () => {
 		try {
 			const response = await axios.get<Proposta[]>(
-				'https://restapitodasxogan.onrender.com/api/propostas/'
+				'https://restapitodasxogan.onrender.com/api/propostas/',
+				{
+					headers: {
+						'Content-Type': 'application/json',
+						Accept: 'application/json',
+					},
+					withCredentials: true,
+				}
 			);
 			setPropostas(response.data);
 
@@ -60,7 +67,14 @@ const PropostasEnviadas = () => {
 			for (const id of userIds) {
 				try {
 					const userResponse = await axios.get<Usuario>(
-						`https://restapitodasxogan.onrender.com/api/usuarios/${id}/`
+						`https://restapitodasxogan.onrender.com/api/usuarios/${id}/`,
+						{
+							headers: {
+								'Content-Type': 'application/json',
+								Accept: 'application/json',
+							},
+							withCredentials: true,
+						}
 					);
 					usuariosTemp[id] = userResponse.data.nome;
 				} catch (err) {
@@ -99,7 +113,9 @@ const PropostasEnviadas = () => {
 				{
 					headers: {
 						'Content-Type': 'application/json',
+						Accept: 'application/json',
 					},
+					withCredentials: true,
 				}
 			);
 
@@ -110,7 +126,9 @@ const PropostasEnviadas = () => {
 				{
 					headers: {
 						'Content-Type': 'application/json',
+						Accept: 'application/json',
 					},
+					withCredentials: true,
 				}
 			);
 
@@ -139,7 +157,9 @@ const PropostasEnviadas = () => {
 				{
 					headers: {
 						'Content-Type': 'application/json',
+						Accept: 'application/json',
 					},
+					withCredentials: true,
 				}
 			);
 
