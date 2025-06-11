@@ -56,8 +56,9 @@ const Login = ({ onLogin }: LoginProps) => {
 				},
 				{
 					headers: {
-						'Content-Type': 'application/json',
 						Accept: 'application/json',
+						'Content-Type': 'application/json',
+						Authorization: `Token ${localStorage.getItem('token')}`,
 					},
 					withCredentials: true,
 				}
@@ -68,6 +69,10 @@ const Login = ({ onLogin }: LoginProps) => {
 					'userId',
 					loginResponse.data.usuario.id.toString()
 				);
+				// Guardar el token si está presente en la respuesta
+				if (loginResponse.data.token) {
+					localStorage.setItem('token', loginResponse.data.token);
+				}
 
 				onLogin(loginResponse.data.usuario);
 			} else {
@@ -108,7 +113,6 @@ const Login = ({ onLogin }: LoginProps) => {
 				`https://restapitodasxogan.onrender.com/api/usuarios/check-nome/${nome}/`,
 				{
 					headers: {
-						'Content-Type': 'application/json',
 						Accept: 'application/json',
 					},
 					withCredentials: true,
@@ -143,7 +147,6 @@ const Login = ({ onLogin }: LoginProps) => {
 				formData,
 				{
 					headers: {
-						'Content-Type': 'multipart/form-data',
 						Accept: 'application/json',
 					},
 					withCredentials: true,

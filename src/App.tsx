@@ -91,8 +91,9 @@ function App() {
 		axios
 			.get('https://restapitodasxogan.onrender.com/api/videoxogos/', {
 				headers: {
-					'Content-Type': 'application/json',
 					Accept: 'application/json',
+					'Content-Type': 'application/json',
+					Authorization: `Token ${localStorage.getItem('token')}`,
 				},
 				withCredentials: true,
 			})
@@ -113,8 +114,11 @@ function App() {
 					`https://restapitodasxogan.onrender.com/api/usuarios/${userId}/`,
 					{
 						headers: {
-							'Content-Type': 'application/json',
 							Accept: 'application/json',
+							'Content-Type': 'application/json',
+							Authorization: `Token ${localStorage.getItem(
+								'token'
+							)}`,
 						},
 						withCredentials: true,
 					}

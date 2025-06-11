@@ -60,8 +60,11 @@ const Catalogo: React.FC<CatalogoProps> = ({
 					'https://restapitodasxogan.onrender.com/api/xeneros/',
 					{
 						headers: {
-							'Content-Type': 'application/json',
 							Accept: 'application/json',
+							'Content-Type': 'application/json',
+							Authorization: `Token ${localStorage.getItem(
+								'token'
+							)}`,
 						},
 						withCredentials: true,
 					}
@@ -73,8 +76,11 @@ const Catalogo: React.FC<CatalogoProps> = ({
 					'https://restapitodasxogan.onrender.com/api/plataformas/',
 					{
 						headers: {
-							'Content-Type': 'application/json',
 							Accept: 'application/json',
+							'Content-Type': 'application/json',
+							Authorization: `Token ${localStorage.getItem(
+								'token'
+							)}`,
 						},
 						withCredentials: true,
 					}
