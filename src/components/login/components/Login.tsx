@@ -49,18 +49,15 @@ const Login = ({ onLogin }: LoginProps) => {
 		e.preventDefault();
 		try {
 			const loginResponse = await axios.post(
-				'https://restapitodasxogan.onrender.com/api/usuarios/login/',
+				'/api/usuarios/login/',
 				{
 					nome: nome,
 					contrasinal: password,
 				},
 				{
 					headers: {
-						Accept: 'application/json',
-						'Content-Type': 'application/json',
 						Authorization: `Token ${localStorage.getItem('token')}`,
 					},
-					withCredentials: true,
 				}
 			);
 
@@ -110,13 +107,7 @@ const Login = ({ onLogin }: LoginProps) => {
 
 		try {
 			const checkUserResponse = await axios.get(
-				`https://restapitodasxogan.onrender.com/api/usuarios/check-nome/${nome}/`,
-				{
-					headers: {
-						Accept: 'application/json',
-					},
-					withCredentials: true,
-				}
+				`/api/usuarios/check-nome/${nome}/`
 			);
 
 			if (checkUserResponse.data.exists) {
@@ -142,16 +133,11 @@ const Login = ({ onLogin }: LoginProps) => {
 				preferencias: [],
 			});
 
-			const response = await axios.post(
-				'https://restapitodasxogan.onrender.com/api/usuarios/',
-				formData,
-				{
-					headers: {
-						Accept: 'application/json',
-					},
-					withCredentials: true,
-				}
-			);
+			const response = await axios.post('/api/usuarios/', formData, {
+				headers: {
+					Accept: 'application/json',
+				},
+			});
 
 			console.log('Respuesta do servidor:', response.data);
 

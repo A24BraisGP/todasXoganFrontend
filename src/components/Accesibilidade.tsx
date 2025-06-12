@@ -24,9 +24,7 @@ const Accesibilidade = () => {
 	useEffect(() => {
 		const fetchAccesibilidades = async () => {
 			try {
-				const response = await axios.get(
-					'https://restapitodasxogan.onrender.com/api/accesibilidades/'
-				);
+				const response = await axios.get('/api/accesibilidades/');
 				setAccesibilidades(response.data);
 			} catch (error) {
 				console.error('Error ao cargar accesibilidades:', error);

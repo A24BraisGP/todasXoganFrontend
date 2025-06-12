@@ -12,6 +12,12 @@ import PropostaForm from './components/PropostaForm';
 import PropostasEnviadas from './components/PropostasEnviadas';
 import Accesibilidade from './components/Accesibilidade';
 
+// Configuración global de axios
+axios.defaults.baseURL = 'https://restapitodasxogan.onrender.com';
+axios.defaults.withCredentials = true;
+axios.defaults.headers.common['Content-Type'] = 'application/json';
+axios.defaults.headers.common['Accept'] = 'application/json';
+
 interface Xogo {
 	id: number;
 	titulo: string;
@@ -89,13 +95,10 @@ function App() {
 	useEffect(() => {
 		// Petición para obtelos videoxogos
 		axios
-			.get('https://restapitodasxogan.onrender.com/api/videoxogos/', {
+			.get('/api/videoxogos/', {
 				headers: {
-					Accept: 'application/json',
-					'Content-Type': 'application/json',
 					Authorization: `Token ${localStorage.getItem('token')}`,
 				},
-				withCredentials: true,
 			})
 			.then((response) => setXogos(response.data))
 			.catch((error) => console.error('Error:', error));
@@ -110,19 +113,11 @@ function App() {
 			setUserId(userId);
 			// Petición sobre o usuario específico se xa existe no local storage
 			axios
-				.get(
-					`https://restapitodasxogan.onrender.com/api/usuarios/${userId}/`,
-					{
-						headers: {
-							Accept: 'application/json',
-							'Content-Type': 'application/json',
-							Authorization: `Token ${localStorage.getItem(
-								'token'
-							)}`,
-						},
-						withCredentials: true,
-					}
-				)
+				.get(`/api/usuarios/${userId}/`, {
+					headers: {
+						Authorization: `Token ${localStorage.getItem('token')}`,
+					},
+				})
 				.then((response) => {
 					setUsers([response.data]);
 				})
@@ -175,16 +170,13 @@ function App() {
 		try {
 			if (isFavorito) {
 				await axios.delete(
-					`https://restapitodasxogan.onrender.com/api/favoritos/delete/?usuario=${userId}&videoxogo=${xogoId}`
+					`/api/favoritos/delete/?usuario=${userId}&videoxogo=${xogoId}`
 				);
 			} else {
-				await axios.post(
-					`https://restapitodasxogan.onrender.com/api/favoritos/`,
-					{
-						usuario: userId,
-						videoxogo: xogoId,
-					}
-				);
+				await axios.post('/api/favoritos/', {
+					usuario: userId,
+					videoxogo: xogoId,
+				});
 			}
 
 			const newFavoritos = isFavorito
