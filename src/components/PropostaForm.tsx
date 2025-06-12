@@ -62,7 +62,6 @@ interface Plataforma {
 interface Accesibilidade {
 	id: number;
 	nome_accesibilidade: string;
-	descricion: string;
 }
 
 interface FormData {
@@ -156,6 +155,10 @@ const PropostaForm = () => {
 		}
 	};
 
+	const cleanInput = (input: string) => {
+		return input.replace(/(<([^>]+)>)/gi, '');
+	};
+
 	const handleChange = (
 		e: React.ChangeEvent<
 			HTMLInputElement | { name?: string; value: unknown }
@@ -214,12 +217,14 @@ const PropostaForm = () => {
 		}
 
 		try {
-			// Crear FormData para enviar la imagen junto con los demás datos
 			const formDataToSend = new FormData();
 
-			// Añadir todos los campos al FormData
+			// Añadir todos los campos al FormData con los nombres exactos del modelo
 			formDataToSend.append('titulo', formData.titulo);
-			formDataToSend.append('descricion', formData.descricion);
+			formDataToSend.append(
+				'descricion',
+				cleanInput(formData.descricion)
+			);
 			formDataToSend.append('prezo', formData.prezo);
 			formDataToSend.append(
 				'idade_recomendada',
@@ -228,25 +233,42 @@ const PropostaForm = () => {
 			formDataToSend.append('desarrolladora', formData.desarrolladora);
 			formDataToSend.append(
 				'usuario_id',
-				localStorage.getItem('userId') || '0'
+				localStorage.getItem('userId') || ''
 			);
 			formDataToSend.append('alt', formData.alt || '');
 
-			// Añadir arrays como JSON strings
-			formDataToSend.append('xenero', JSON.stringify(formData.xeneros));
-			formDataToSend.append(
-				'plataforma',
-				JSON.stringify(formData.plataformas)
-			);
-			formDataToSend.append(
-				'accesibilidades',
-				JSON.stringify(formData.accesibilidades)
-			);
+			// Añadir los arrays de IDs directamente
+			formData.xeneros.forEach((id) => {
+				formDataToSend.append('xenero', id.toString());
+			});
+
+			formData.plataformas.forEach((id) => {
+				formDataToSend.append('plataforma', id.toString());
+			});
+
+			formData.accesibilidades.forEach((id) => {
+				formDataToSend.append('accesibilidades', id.toString());
+			});
 
 			// Añadir la imagen si existe
 			if (formData.caratula) {
 				formDataToSend.append('caratula', formData.caratula);
 			}
+
+			// Log de los datos que se van a enviar
+			console.log('Datos a enviar:', {
+				titulo: formData.titulo,
+				descricion: formData.descricion,
+				prezo: formData.prezo,
+				idade_recomendada: formData.idade_recomendada,
+				desarrolladora: formData.desarrolladora,
+				usuario_id: localStorage.getItem('userId'),
+				alt: formData.alt,
+				xenero: formData.xeneros,
+				plataforma: formData.plataformas,
+				accesibilidades: formData.accesibilidades,
+				tieneImagen: !!formData.caratula,
+			});
 
 			const response = await axios.post(
 				'/api/propostas/',
@@ -254,7 +276,9 @@ const PropostaForm = () => {
 				{
 					headers: {
 						'Content-Type': 'multipart/form-data',
+						Authorization: `Token ${localStorage.getItem('token')}`,
 					},
+					withCredentials: true,
 				}
 			);
 
@@ -275,8 +299,21 @@ const PropostaForm = () => {
 				});
 			}
 		} catch (error) {
-			console.error('Error submitting form:', error);
-			setError('Error al enviar la propuesta');
+			console.error('Error completo:', error);
+			if (axios.isAxiosError(error)) {
+				console.error('Datos del error:', {
+					status: error.response?.status,
+					data: error.response?.data,
+					headers: error.response?.headers,
+				});
+				setError(
+					error.response?.data?.detail ||
+						error.response?.data?.error ||
+						'Error al enviar la propuesta'
+				);
+			} else {
+				setError('Error al enviar la propuesta');
+			}
 		}
 	};
 

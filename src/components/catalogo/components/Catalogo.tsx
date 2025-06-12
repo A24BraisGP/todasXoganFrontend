@@ -287,7 +287,7 @@ const Catalogo: React.FC<CatalogoProps> = ({
 										setFiltroPrezoMin(e.target.value)
 									}
 									min="0"
-									step="0.01"
+									step="1"
 									placeholder="Mín"
 								/>
 								<input
@@ -298,7 +298,7 @@ const Catalogo: React.FC<CatalogoProps> = ({
 										setFiltroPrezoMax(e.target.value)
 									}
 									min="0"
-									step="0.01"
+									step="1"
 									placeholder="Máx"
 								/>
 							</div>

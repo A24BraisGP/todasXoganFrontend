@@ -19,7 +19,7 @@ const Nav = ({
 }: NavProps) => {
 	const getInitials = (name: string) => {
 		return name
-			.split(' ')
+			.split('')
 			.map((word) => word[0])
 			.join('')
 			.toUpperCase()
@@ -33,7 +33,7 @@ const Nav = ({
 		if (userName) {
 			return getInitials(userName);
 		}
-		return 'https://ui-avatars.com/api/?name=User&background=random';
+		return '';
 	};
 
 	return (

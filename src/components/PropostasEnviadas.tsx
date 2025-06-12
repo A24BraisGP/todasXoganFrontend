@@ -27,13 +27,6 @@ interface Usuario {
 	admin: boolean;
 }
 
-// Constantes para los estados de las propuestas
-const ESTADO_PROPOSITA = {
-	PENDENTE: 'PENDENTE',
-	APROBADA: 'APROBADA',
-	REXEITADA: 'REXEITADA',
-} as const;
-
 const PropostasEnviadas = () => {
 	const [propostas, setPropostas] = useState<Proposta[]>([]);
 	const [loading, setLoading] = useState(true);
@@ -92,90 +85,136 @@ const PropostasEnviadas = () => {
 
 	const handleAceptar = async (proposta: Proposta) => {
 		try {
-			// Crear nuevo juego con los datos de la propuesta
-			const juegoData = {
-				titulo: proposta.titulo,
-				descricion: proposta.descricion,
-				prezo: proposta.prezo,
-				idade_recomendada: proposta.idade_recomendada,
-				desarrolladora: proposta.desarrolladora,
-				xenero: proposta.xenero,
-				plataforma: proposta.plataforma,
-				caratula: proposta.caratula,
-				accesibilidades: proposta.accesibilidades,
-			};
+			// Crear FormData para el nuevo juego
+			const formData = new FormData();
 
-			console.log('Datos a crear:', juegoData);
+			// Añadir campos básicos
+			formData.append('titulo', proposta.titulo);
+			formData.append('descricion', proposta.descricion);
+			formData.append('prezo', proposta.prezo.toString());
+			formData.append(
+				'idade_recomendada',
+				proposta.idade_recomendada.toString()
+			);
+			formData.append('desarrolladora', proposta.desarrolladora);
 
-			await axios.post(
+			// Añadir campos many-to-many como números individuales
+			proposta.xenero.forEach((id) => {
+				formData.append('xenero', id.toString());
+			});
+			proposta.plataforma.forEach((id) => {
+				formData.append('plataforma', id.toString());
+			});
+			proposta.accesibilidades.forEach((id) => {
+				formData.append('accesibilidades', id.toString());
+			});
+
+			// Obtener y añadir la carátula como archivo
+			if (proposta.caratula) {
+				try {
+					const response = await fetch(proposta.caratula);
+					const blob = await response.blob();
+					formData.append('caratula', blob, 'caratula.jpg');
+				} catch (error) {
+					console.error('Error al obtener la carátula:', error);
+				}
+			}
+
+			// Crear el nuevo juego
+			const xogoResponse = await axios.post(
 				'https://restapitodasxogan.onrender.com/api/videoxogos/',
-				juegoData,
+				formData,
 				{
 					headers: {
-						'Content-Type': 'application/json',
-						Accept: 'application/json',
+						'Content-Type': 'multipart/form-data',
+						Authorization: `Token ${localStorage.getItem('token')}`,
 					},
 					withCredentials: true,
 				}
 			);
 
-			// Actualizar el estado de la propuesta a APROBADA
-			const response = await axios.patch(
-				`https://restapitodasxogan.onrender.com/api/propostas/${proposta.id}/`,
-				{ estado: ESTADO_PROPOSITA.APROBADA },
-				{
-					headers: {
-						'Content-Type': 'application/json',
-						Accept: 'application/json',
-					},
-					withCredentials: true,
-				}
-			);
-
-			if (response.status === 200) {
-				setPropostas(
-					propostas.map((p) =>
-						p.id === proposta.id
-							? { ...p, estado: ESTADO_PROPOSITA.APROBADA }
-							: p
-					)
+			if (xogoResponse.status === 200) {
+				console.log(
+					'Actualizando estado de la propuesta a APROBADA...'
 				);
+				const updateData = { estado: 'APROBADA' };
+				console.log('Datos a enviar:', updateData);
+
+				const response = await axios.patch(
+					`https://restapitodasxogan.onrender.com/api/propostas/${proposta.id}/`,
+					updateData,
+					{
+						headers: {
+							'Content-Type': 'application/json',
+							Accept: 'application/json',
+							Authorization: `Token ${localStorage.getItem(
+								'token'
+							)}`,
+						},
+						withCredentials: true,
+					}
+				);
+
+				console.log('Respuesta del servidor:', response.data);
+
+				if (response.status === 200) {
+					// Eliminar la propuesta de la lista (solo visualmente)
+					setPropostas(propostas.filter((p) => p.id !== proposta.id));
+				} else {
+					setError('Erro ao actualizar o estado da proposta');
+				}
 			} else {
-				setError('Erro ao actualizar o estado da proposta');
+				setError('Erro ao crear o xogo');
 			}
 		} catch (err) {
 			console.error('Error aceptar propuesta:', err);
+			if (axios.isAxiosError(err)) {
+				console.error('Datos del error:', {
+					status: err.response?.status,
+					data: err.response?.data,
+					headers: err.response?.headers,
+				});
+			}
 			setError('Erro ao aceptar a proposta');
 		}
 	};
 
 	const handleRechazar = async (propostaId: number) => {
 		try {
+			console.log('Actualizando estado de la propuesta a REXEITADA...');
+			const updateData = { estado: 'REXEITADA' };
+			console.log('Datos a enviar:', updateData);
+
 			const response = await axios.patch(
 				`https://restapitodasxogan.onrender.com/api/propostas/${propostaId}/`,
-				{ estado: ESTADO_PROPOSITA.REXEITADA },
+				updateData,
 				{
 					headers: {
 						'Content-Type': 'application/json',
 						Accept: 'application/json',
+						Authorization: `Token ${localStorage.getItem('token')}`,
 					},
 					withCredentials: true,
 				}
 			);
 
+			console.log('Respuesta del servidor:', response.data);
+
 			if (response.status === 200) {
-				setPropostas(
-					propostas.map((p) =>
-						p.id === propostaId
-							? { ...p, estado: ESTADO_PROPOSITA.REXEITADA }
-							: p
-					)
-				);
+				// Eliminar la propuesta de la lista (solo visualmente)
+				setPropostas(propostas.filter((p) => p.id !== propostaId));
 			} else {
 				setError('Erro ao actualizar o estado da proposta');
 			}
 		} catch (err) {
 			console.error('Erro rexeitar propuesta:', err);
+			if (axios.isAxiosError(err)) {
+				console.error('Datos del error:', {
+					status: err.response?.status,
+					data: err.response?.data,
+					headers: err.response?.headers,
+				});
+			}
 			setError('Erro ao rexeitar a proposta');
 		}
 	};
@@ -196,72 +235,77 @@ const PropostasEnviadas = () => {
 		<div className="container mx-auto p-4">
 			<h2 className="text-2xl font-bold mb-6">Propostas Enviadas</h2>
 			<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-				{propostas.map((proposta) => (
-					<div
-						key={proposta.id}
-						className="card bg-base-100 shadow-xl"
-					>
-						<figure>
-							<img
-								src={proposta.caratula}
-								alt={proposta.titulo}
-								className="w-full h-48 object-cover"
-							/>
-						</figure>
-						<div className="card-body">
-							<h2 className="card-title">{proposta.titulo}</h2>
-							<p className="line-clamp-3">
-								{proposta.descricion}
-							</p>
-							<div className="flex flex-wrap gap-2 mt-2">
-								<div className="badge badge-primary">
-									{proposta.idade_recomendada}+
+				{propostas
+					.filter((proposta) => proposta.estado === 'PENDENTE')
+					.map((proposta) => (
+						<div
+							key={proposta.id}
+							className="card bg-base-100 shadow-xl"
+						>
+							<figure>
+								<img
+									src={proposta.caratula}
+									alt={proposta.titulo}
+									className="w-full h-48 object-cover"
+								/>
+							</figure>
+							<div className="card-body">
+								<h2 className="card-title">
+									{proposta.titulo}
+								</h2>
+								<p className="line-clamp-3">
+									{proposta.descricion}
+								</p>
+								<div className="flex flex-wrap gap-2 mt-2">
+									<div className="badge badge-primary">
+										{proposta.idade_recomendada}+
+									</div>
+									<div className="badge badge-secondary">
+										{proposta.prezo}€
+									</div>
+									<div className="badge badge-accent">
+										Enviado por:{' '}
+										{usuarios[proposta.usuario_id] ||
+											'Cargando...'}
+									</div>
+									<div
+										className={`badge ${
+											proposta.estado === 'APROBADA'
+												? 'badge-success'
+												: proposta.estado ===
+												  'REXEITADA'
+												? 'badge-error'
+												: 'badge-warning'
+										}`}
+									>
+										{proposta.estado}
+									</div>
 								</div>
-								<div className="badge badge-secondary">
-									{proposta.prezo}€
-								</div>
-								<div className="badge badge-accent">
-									Enviado por:{' '}
-									{usuarios[proposta.usuario_id] ||
-										'Cargando...'}
-								</div>
-								<div
-									className={`badge ${
-										proposta.estado ===
-										ESTADO_PROPOSITA.APROBADA
-											? 'badge-success'
-											: proposta.estado ===
-											  ESTADO_PROPOSITA.REXEITADA
-											? 'badge-error'
-											: 'badge-warning'
-									}`}
-								>
-									{proposta.estado}
-								</div>
+								{proposta.estado === 'PENDENTE' && (
+									<div className="card-actions justify-end mt-4">
+										<button
+											className="btn btn-success btn-sm"
+											onClick={() =>
+												handleAceptar(proposta)
+											}
+										>
+											Aceptar
+										</button>
+										<button
+											className="btn btn-error btn-sm"
+											onClick={() =>
+												handleRechazar(proposta.id)
+											}
+										>
+											Rexeitar
+										</button>
+									</div>
+								)}
 							</div>
-							{proposta.estado === ESTADO_PROPOSITA.PENDENTE && (
-								<div className="card-actions justify-end mt-4">
-									<button
-										className="btn btn-success btn-sm"
-										onClick={() => handleAceptar(proposta)}
-									>
-										Aceptar
-									</button>
-									<button
-										className="btn btn-error btn-sm"
-										onClick={() =>
-											handleRechazar(proposta.id)
-										}
-									>
-										Rexeitar
-									</button>
-								</div>
-							)}
 						</div>
-					</div>
-				))}
+					))}
 			</div>
-			{propostas.length === 0 && (
+			{propostas.filter((p) => p.estado === 'PENDENTE').length === 0 && (
 				<div className="text-center mt-8">
 					<p className="text-lg">Non hai propostas pendentes</p>
 				</div>

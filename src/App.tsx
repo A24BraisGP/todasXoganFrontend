@@ -15,7 +15,6 @@ import Accesibilidade from './components/Accesibilidade';
 // Configuración global de axios
 axios.defaults.baseURL = 'https://restapitodasxogan.onrender.com';
 axios.defaults.withCredentials = true;
-axios.defaults.headers.common['Content-Type'] = 'application/json';
 axios.defaults.headers.common['Accept'] = 'application/json';
 
 interface Xogo {
