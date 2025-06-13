@@ -50,7 +50,7 @@ const Login = ({ onLogin }: LoginProps) => {
 		try {
 			const loginResponse = await axios.post('/api/usuarios/login/', {
 				nome: nome,
-				contrasinal: password,
+				password: password,
 			});
 
 			if (loginResponse.data.usuario) {
@@ -110,7 +110,7 @@ const Login = ({ onLogin }: LoginProps) => {
 			const formData = new FormData();
 			formData.append('nome', nome);
 			formData.append('email', email);
-			formData.append('contrasinal', password);
+			formData.append('password', password);
 			formData.append('username', nome);
 			if (imaxeUser) formData.append('imaxe_user', imaxeUser);
 

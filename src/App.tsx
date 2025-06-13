@@ -86,11 +86,7 @@ function App() {
 	useEffect(() => {
 		// Petición para obtelos videoxogos
 		axios
-			.get('/api/videoxogos/', {
-				headers: {
-					Authorization: `Bearer ${localStorage.getItem('token')}`,
-				},
-			})
+			.get('/api/videoxogos/')
 			.then((response) => setXogos(response.data))
 			.catch((error) => console.error('Error:', error));
 
@@ -104,11 +100,7 @@ function App() {
 			setUserId(userId);
 			// Petición sobre o usuario específico se xa existe no local storage
 			axios
-				.get(`/api/usuarios/${userId}/`, {
-					headers: {
-						Authorization: `Bearer ${localStorage.getItem('token')}`,
-					},
-				})
+				.get(`/api/usuarios/${userId}/`)
 				.then((response) => {
 					setUsers([response.data]);
 				})
@@ -163,7 +155,12 @@ function App() {
 		try {
 			if (isFavorito) {
 				await axios.delete(
-					`/api/favoritos/delete/?usuario=${userId}&videoxogo=${xogoId}`
+					`/api/favoritos/delete/?usuario=${userId}&videoxogo=${xogoId}`,
+					{
+						headers: {
+							Authorization: `Bearer ${localStorage.getItem('token')}`,
+						},
+					}
 				);
 			} else {
 				await axios.post(
