@@ -3,7 +3,6 @@ import axios from 'axios';
 import Alert from './Alert';
 import { z } from 'zod';
 
-// Esquema de validación para registro
 const registerSchema = z.object({
 	nome: z
 		.string()
