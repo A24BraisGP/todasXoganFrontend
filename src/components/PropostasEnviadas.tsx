@@ -52,9 +52,7 @@ const PropostasEnviadas = () => {
 			setPropostas(response.data);
 
 			// Obtener los nombres de usuario para cada propuesta
-			const userIds = [
-				...new Set(response.data.map((p) => p.usuario_id)),
-			];
+			const userIds = [...new Set(response.data.map((p) => p.usuario_id))];
 			const usuariosTemp: { [key: number]: string } = {};
 
 			for (const id of userIds) {
@@ -109,7 +107,6 @@ const PropostasEnviadas = () => {
 				formData.append('accesibilidades', id.toString());
 			});
 
-			// Obtener y añadir la carátula como archivo
 			if (proposta.caratula) {
 				try {
 					const response = await fetch(proposta.caratula);
@@ -120,23 +117,21 @@ const PropostasEnviadas = () => {
 				}
 			}
 
-			// Crear el nuevo juego
+			// Crear o xogo
 			const xogoResponse = await axios.post(
 				'https://restapitodasxogan.onrender.com/api/videoxogos/',
 				formData,
 				{
 					headers: {
 						'Content-Type': 'multipart/form-data',
-						Authorization: `Token ${localStorage.getItem('token')}`,
+						Authorization: `Bearer ${localStorage.getItem('token')}`,
 					},
 					withCredentials: true,
 				}
 			);
 
 			if (xogoResponse.status === 200) {
-				console.log(
-					'Actualizando estado de la propuesta a APROBADA...'
-				);
+				console.log('Actualizando estado de la propuesta a APROBADA...');
 				const updateData = { estado: 'APROBADA' };
 				console.log('Datos a enviar:', updateData);
 
@@ -147,9 +142,7 @@ const PropostasEnviadas = () => {
 						headers: {
 							'Content-Type': 'application/json',
 							Accept: 'application/json',
-							Authorization: `Token ${localStorage.getItem(
-								'token'
-							)}`,
+							Authorization: `Bearer ${localStorage.getItem('token')}`,
 						},
 						withCredentials: true,
 					}
@@ -192,7 +185,7 @@ const PropostasEnviadas = () => {
 					headers: {
 						'Content-Type': 'application/json',
 						Accept: 'application/json',
-						Authorization: `Token ${localStorage.getItem('token')}`,
+						Authorization: `Bearer ${localStorage.getItem('token')}`,
 					},
 					withCredentials: true,
 				}
@@ -238,10 +231,7 @@ const PropostasEnviadas = () => {
 				{propostas
 					.filter((proposta) => proposta.estado === 'PENDENTE')
 					.map((proposta) => (
-						<div
-							key={proposta.id}
-							className="card bg-base-100 shadow-xl"
-						>
+						<div key={proposta.id} className="card bg-base-100 shadow-xl">
 							<figure>
 								<img
 									src={proposta.caratula}
@@ -250,30 +240,22 @@ const PropostasEnviadas = () => {
 								/>
 							</figure>
 							<div className="card-body">
-								<h2 className="card-title">
-									{proposta.titulo}
-								</h2>
-								<p className="line-clamp-3">
-									{proposta.descricion}
-								</p>
+								<h2 className="card-title">{proposta.titulo}</h2>
+								<p className="line-clamp-3">{proposta.descricion}</p>
 								<div className="flex flex-wrap gap-2 mt-2">
 									<div className="badge badge-primary">
 										{proposta.idade_recomendada}+
 									</div>
-									<div className="badge badge-secondary">
-										{proposta.prezo}€
-									</div>
+									<div className="badge badge-secondary">{proposta.prezo}€</div>
 									<div className="badge badge-accent">
 										Enviado por:{' '}
-										{usuarios[proposta.usuario_id] ||
-											'Cargando...'}
+										{usuarios[proposta.usuario_id] || 'Cargando...'}
 									</div>
 									<div
 										className={`badge ${
 											proposta.estado === 'APROBADA'
 												? 'badge-success'
-												: proposta.estado ===
-												  'REXEITADA'
+												: proposta.estado === 'REXEITADA'
 												? 'badge-error'
 												: 'badge-warning'
 										}`}
@@ -285,17 +267,13 @@ const PropostasEnviadas = () => {
 									<div className="card-actions justify-end mt-4">
 										<button
 											className="btn btn-success btn-sm"
-											onClick={() =>
-												handleAceptar(proposta)
-											}
+											onClick={() => handleAceptar(proposta)}
 										>
 											Aceptar
 										</button>
 										<button
 											className="btn btn-error btn-sm"
-											onClick={() =>
-												handleRechazar(proposta.id)
-											}
+											onClick={() => handleRechazar(proposta.id)}
 										>
 											Rexeitar
 										</button>

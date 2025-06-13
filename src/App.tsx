@@ -70,18 +70,10 @@ function App() {
 			} else if (event.ctrlKey && event.key.toLowerCase() === 'c') {
 				event.preventDefault();
 				setTab('catalogo');
-			} else if (
-				event.ctrlKey &&
-				event.key.toLowerCase() === 'a' &&
-				!userId
-			) {
+			} else if (event.ctrlKey && event.key.toLowerCase() === 'a' && !userId) {
 				event.preventDefault();
 				setTab('perfil');
-			} else if (
-				event.ctrlKey &&
-				event.key.toLowerCase() === 'ñ' &&
-				!userId
-			) {
+			} else if (event.ctrlKey && event.key.toLowerCase() === 'ñ' && !userId) {
 				event.preventDefault();
 				handleLoginClick();
 			}
@@ -96,7 +88,7 @@ function App() {
 		axios
 			.get('/api/videoxogos/', {
 				headers: {
-					Authorization: `Token ${localStorage.getItem('token')}`,
+					Authorization: `Bearer ${localStorage.getItem('token')}`,
 				},
 			})
 			.then((response) => setXogos(response.data))
@@ -114,7 +106,7 @@ function App() {
 			axios
 				.get(`/api/usuarios/${userId}/`, {
 					headers: {
-						Authorization: `Token ${localStorage.getItem('token')}`,
+						Authorization: `Bearer ${localStorage.getItem('token')}`,
 					},
 				})
 				.then((response) => {
@@ -151,6 +143,8 @@ function App() {
 		setUserId(0);
 		setUsers([]);
 		localStorage.removeItem('userId');
+		localStorage.removeItem('token');
+		localStorage.removeItem('refreshToken');
 		setTab('inicio');
 	};
 
@@ -172,10 +166,19 @@ function App() {
 					`/api/favoritos/delete/?usuario=${userId}&videoxogo=${xogoId}`
 				);
 			} else {
-				await axios.post('/api/favoritos/', {
-					usuario: userId,
-					videoxogo: xogoId,
-				});
+				await axios.post(
+					'/api/favoritos/',
+					{
+						usuario: userId,
+						videoxogo: xogoId,
+					},
+					{
+						headers: {
+							Authorization: `Bearer ${localStorage.getItem('token')}`,
+						},
+						withCredentials: true,
+					}
+				);
 			}
 
 			const newFavoritos = isFavorito
@@ -200,9 +203,7 @@ function App() {
 			case 'inicio':
 				return (
 					<div className="flex flex-col items-center justify-center min-h-screen p-4">
-						<h1 className="text-4xl font-bold mb-4">
-							Benvida a TodasXogan
-						</h1>
+						<h1 className="text-4xl font-bold mb-4">Benvida a TodasXogan</h1>
 						{/* TODO poñer intro en orde */}
 						<p className="text-xl text-center max-w-2xl"></p>
 					</div>
@@ -214,10 +215,7 @@ function App() {
 							xogos={xogos}
 							onVerDetalles={handleVerDetalles}
 							onToggleFavorito={handleToggleFavorito}
-							favoritos={
-								users.find((u) => u.id === userId)?.favoritos ||
-								[]
-							}
+							favoritos={users.find((u) => u.id === userId)?.favoritos || []}
 						/>
 					</div>
 				);
@@ -226,10 +224,7 @@ function App() {
 					<div className="flex flex-col items-center w-full p-4">
 						<Favoritos
 							xogos={xogos}
-							favoritos={
-								users.find((u) => u.id === userId)?.favoritos ||
-								[]
-							}
+							favoritos={users.find((u) => u.id === userId)?.favoritos || []}
 							onVerDetalles={handleVerDetalles}
 							onToggleFavorito={handleToggleFavorito}
 							userName={users.find((u) => u.id === userId)?.nome}
@@ -279,9 +274,7 @@ function App() {
 				onLoginClick={handleLoginClick}
 				isLoggedIn={!!userId}
 				userName={users.find((u) => u.id === userId)?.nome}
-				userImage={
-					users.find((u) => u.id === userId)?.imaxe_user || undefined
-				}
+				userImage={users.find((u) => u.id === userId)?.imaxe_user || undefined}
 				onHomeClick={() => setTab('inicio')}
 				onLogout={handleLogout}
 				onAccesibilidadClick={handleAccesibilidadClick}

@@ -22,8 +22,7 @@ const propostaSchema = z.object({
 	idade_recomendada: z
 		.number()
 		.refine((val) => [3, 6, 9, 12, 16, 18].includes(val), {
-			message:
-				'A idade recomendada debe de ser unha das opcións dispoñibles.',
+			message: 'A idade recomendada debe de ser unha das opcións dispoñibles.',
 		}),
 	caratula: z.any().optional(),
 	alt: z
@@ -104,9 +103,7 @@ const PropostaForm = () => {
 	});
 	const [xeneros, setXeneros] = useState<Xenero[]>([]);
 	const [plataformas, setPlataformas] = useState<Plataforma[]>([]);
-	const [accesibilidades, setAccesibilidades] = useState<Accesibilidade[]>(
-		[]
-	);
+	const [accesibilidades, setAccesibilidades] = useState<Accesibilidade[]>([]);
 	const [error, setError] = useState<string>('');
 	const [success, setSuccess] = useState<string>('');
 	const [validationErrors, setValidationErrors] = useState<{
@@ -160,9 +157,7 @@ const PropostaForm = () => {
 	};
 
 	const handleChange = (
-		e: React.ChangeEvent<
-			HTMLInputElement | { name?: string; value: unknown }
-		>
+		e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>
 	) => {
 		const { name, value } = e.target;
 		if (name) {
@@ -221,20 +216,14 @@ const PropostaForm = () => {
 
 			// Añadir todos los campos al FormData con los nombres exactos del modelo
 			formDataToSend.append('titulo', formData.titulo);
-			formDataToSend.append(
-				'descricion',
-				cleanInput(formData.descricion)
-			);
+			formDataToSend.append('descricion', cleanInput(formData.descricion));
 			formDataToSend.append('prezo', formData.prezo);
 			formDataToSend.append(
 				'idade_recomendada',
 				formData.idade_recomendada.toString()
 			);
 			formDataToSend.append('desarrolladora', formData.desarrolladora);
-			formDataToSend.append(
-				'usuario_id',
-				localStorage.getItem('userId') || ''
-			);
+			formDataToSend.append('usuario_id', localStorage.getItem('userId') || '');
 			formDataToSend.append('alt', formData.alt || '');
 
 			// Añadir los arrays de IDs directamente
@@ -270,17 +259,13 @@ const PropostaForm = () => {
 				tieneImagen: !!formData.caratula,
 			});
 
-			const response = await axios.post(
-				'/api/propostas/',
-				formDataToSend,
-				{
-					headers: {
-						'Content-Type': 'multipart/form-data',
-						Authorization: `Token ${localStorage.getItem('token')}`,
-					},
-					withCredentials: true,
-				}
-			);
+			const response = await axios.post('/api/propostas/', formDataToSend, {
+				headers: {
+					'Content-Type': 'multipart/form-data',
+					Authorization: `Bearer ${localStorage.getItem('token')}`,
+				},
+				withCredentials: true,
+			});
 
 			if (response.status === 201) {
 				setSuccess('Proposta enviada con éxito');
@@ -324,34 +309,26 @@ const PropostaForm = () => {
 					<h2 className="card-title text-2xl font-bold text-center mb-8">
 						Propor Novo Xogo
 					</h2>
-					{error && (
-						<Alert onClose={() => setError('')}>{error}</Alert>
-					)}
-					{success && (
-						<Alert onClose={() => setSuccess('')}>{success}</Alert>
-					)}
-					{Object.entries(validationErrors).map(
-						([field, message]) => (
-							<Alert
-								key={field}
-								onClose={() => {
-									setValidationErrors((prev) => {
-										const newErrors = { ...prev };
-										delete newErrors[field];
-										return newErrors;
-									});
-								}}
-							>
-								{message}
-							</Alert>
-						)
-					)}
+					{error && <Alert onClose={() => setError('')}>{error}</Alert>}
+					{success && <Alert onClose={() => setSuccess('')}>{success}</Alert>}
+					{Object.entries(validationErrors).map(([field, message]) => (
+						<Alert
+							key={field}
+							onClose={() => {
+								setValidationErrors((prev) => {
+									const newErrors = { ...prev };
+									delete newErrors[field];
+									return newErrors;
+								});
+							}}
+						>
+							{message}
+						</Alert>
+					))}
 					<form onSubmit={handleSubmit} className="space-y-6">
 						<div className="form-control">
 							<label className="label">
-								<span className="label-text font-semibold mx-4">
-									Título
-								</span>
+								<span className="label-text font-semibold mx-4">Título</span>
 							</label>
 							<input
 								type="text"
@@ -379,9 +356,7 @@ const PropostaForm = () => {
 								value={formData.desarrolladora}
 								onChange={handleChange}
 								className={`input input-bordered w-full ${
-									validationErrors.desarrolladora
-										? 'input-error'
-										: ''
+									validationErrors.desarrolladora ? 'input-error' : ''
 								}`}
 								required
 							/>
@@ -399,9 +374,7 @@ const PropostaForm = () => {
 								value={formData.descricion}
 								onChange={handleChange}
 								className={`textarea textarea-bordered h-32 ${
-									validationErrors.descricion
-										? 'textarea-error'
-										: ''
+									validationErrors.descricion ? 'textarea-error' : ''
 								}`}
 								required
 							/>
@@ -410,9 +383,7 @@ const PropostaForm = () => {
 						<div className="grid grid-cols-2 gap-6">
 							<div className="form-control">
 								<label className="label">
-									<span className="label-text font-semibold mx-4">
-										Prezo
-									</span>
+									<span className="label-text font-semibold mx-4">Prezo</span>
 								</label>
 								<input
 									type="number"
@@ -420,9 +391,7 @@ const PropostaForm = () => {
 									value={formData.prezo}
 									onChange={handleChange}
 									className={`input input-bordered w-full ${
-										validationErrors.prezo
-											? 'input-error'
-											: ''
+										validationErrors.prezo ? 'input-error' : ''
 									}`}
 									step="0.01"
 									min="0"
@@ -441,9 +410,7 @@ const PropostaForm = () => {
 									value={formData.idade_recomendada}
 									onChange={handleChange}
 									className={`select select-bordered w-full ${
-										validationErrors.idade_recomendada
-											? 'select-error'
-											: ''
+										validationErrors.idade_recomendada ? 'select-error' : ''
 									}`}
 									required
 								>
@@ -458,9 +425,7 @@ const PropostaForm = () => {
 
 						<div className="form-control">
 							<label className="label">
-								<span className="label-text font-semibold mx-4">
-									Xéneros
-								</span>
+								<span className="label-text font-semibold mx-4">Xéneros</span>
 							</label>
 							<div className="bg-base-100 rounded-lg p-4 space-y-2 max-h-48 overflow-y-auto">
 								{xeneros.map((xenero) => (
@@ -471,28 +436,16 @@ const PropostaForm = () => {
 										<input
 											type="checkbox"
 											className="checkbox checkbox-primary"
-											checked={formData.xeneros.includes(
-												xenero.id
-											)}
+											checked={formData.xeneros.includes(xenero.id)}
 											onChange={(e) => {
-												const newXeneros = e.target
-													.checked
-													? [
-															...formData.xeneros,
-															xenero.id,
-													  ]
-													: formData.xeneros.filter(
-															(id) =>
-																id !== xenero.id
-													  );
+												const newXeneros = e.target.checked
+													? [...formData.xeneros, xenero.id]
+													: formData.xeneros.filter((id) => id !== xenero.id);
 												setFormData((prev) => ({
 													...prev,
 													xeneros: newXeneros,
 												}));
-												validateField(
-													'xeneros',
-													newXeneros
-												);
+												validateField('xeneros', newXeneros);
 											}}
 										/>
 										<span>{xenero.xenero}</span>
@@ -516,29 +469,18 @@ const PropostaForm = () => {
 										<input
 											type="checkbox"
 											className="checkbox checkbox-primary"
-											checked={formData.plataformas.includes(
-												plataforma.id
-											)}
+											checked={formData.plataformas.includes(plataforma.id)}
 											onChange={(e) => {
-												const newPlataformas = e.target
-													.checked
-													? [
-															...formData.plataformas,
-															plataforma.id,
-													  ]
+												const newPlataformas = e.target.checked
+													? [...formData.plataformas, plataforma.id]
 													: formData.plataformas.filter(
-															(id) =>
-																id !==
-																plataforma.id
+															(id) => id !== plataforma.id
 													  );
 												setFormData((prev) => ({
 													...prev,
 													plataformas: newPlataformas,
 												}));
-												validateField(
-													'plataformas',
-													newPlataformas
-												);
+												validateField('plataformas', newPlataformas);
 											}}
 										/>
 										<span>{plataforma.plataforma}</span>
@@ -566,27 +508,18 @@ const PropostaForm = () => {
 												accesibilidade.id
 											)}
 											onChange={(e) => {
-												const newAccesibilidades = e
-													.target.checked
-													? [
-															...formData.accesibilidades,
-															accesibilidade.id,
-													  ]
+												const newAccesibilidades = e.target.checked
+													? [...formData.accesibilidades, accesibilidade.id]
 													: formData.accesibilidades.filter(
-															(id) =>
-																id !==
-																accesibilidade.id
+															(id) => id !== accesibilidade.id
 													  );
 												setFormData((prev) => ({
 													...prev,
-													accesibilidades:
-														newAccesibilidades,
+													accesibilidades: newAccesibilidades,
 												}));
 											}}
 										/>
-										<span>
-											{accesibilidade.nome_accesibilidade}
-										</span>
+										<span>{accesibilidade.nome_accesibilidade}</span>
 									</label>
 								))}
 							</div>
@@ -594,9 +527,7 @@ const PropostaForm = () => {
 
 						<div className="form-control">
 							<label className="label">
-								<span className="label-text font-semibold mx-4">
-									Carátula
-								</span>
+								<span className="label-text font-semibold mx-4">Carátula</span>
 							</label>
 							<input
 								type="file"
@@ -606,8 +537,7 @@ const PropostaForm = () => {
 							/>
 							{formData.caratula && (
 								<p className="text-sm mt-2">
-									Archivo seleccionado:{' '}
-									{formData.caratula.name}
+									Archivo seleccionado: {formData.caratula.name}
 								</p>
 							)}
 						</div>
@@ -636,10 +566,7 @@ const PropostaForm = () => {
 						</div>
 
 						<div className="form-control mt-8">
-							<button
-								type="submit"
-								className="btn btn-primary w-full"
-							>
+							<button type="submit" className="btn btn-primary w-full">
 								Enviar Proposta
 							</button>
 						</div>

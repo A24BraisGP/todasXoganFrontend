@@ -48,18 +48,10 @@ const Login = ({ onLogin }: LoginProps) => {
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 		try {
-			const loginResponse = await axios.post(
-				'/api/usuarios/login/',
-				{
-					nome: nome,
-					contrasinal: password,
-				},
-				{
-					headers: {
-						Authorization: `Token ${localStorage.getItem('token')}`,
-					},
-				}
-			);
+			const loginResponse = await axios.post('/api/usuarios/login/', {
+				nome: nome,
+				contrasinal: password,
+			});
 
 			if (loginResponse.data.usuario) {
 				localStorage.setItem(
@@ -68,15 +60,15 @@ const Login = ({ onLogin }: LoginProps) => {
 				);
 				// Guardar el token si está presente en la respuesta
 				if (loginResponse.data.token) {
-					localStorage.setItem('token', loginResponse.data.token);
+					localStorage.setItem('token', loginResponse.data.access);
+					localStorage.setItem('refreshToken', loginResponse.data.refresh);
 				}
 
 				onLogin(loginResponse.data.usuario);
+				console.log('Login exitoso:', loginResponse.data.mensaje);
 			} else {
 				console.error('Error de login - Datos:', loginResponse.data);
-				setError(
-					loginResponse.data.error || 'Error no inicio de sesión'
-				);
+				setError(loginResponse.data.error || 'Error no inicio de sesión');
 			}
 		} catch (err) {
 			console.error('Error inicio de sesión:', err);
@@ -166,10 +158,7 @@ const Login = ({ onLogin }: LoginProps) => {
 							<h2 className="card-title text-2xl font-bold text-center mb-6">
 								Crear conta
 							</h2>
-							<form
-								onSubmit={handleRegister}
-								encType="multipart/form-data"
-							>
+							<form onSubmit={handleRegister} encType="multipart/form-data">
 								<div className="form-control">
 									<label className="label">
 										<span className="label-text">Nome</span>
@@ -179,43 +168,33 @@ const Login = ({ onLogin }: LoginProps) => {
 										placeholder="Nome"
 										className="input input-bordered"
 										value={nome}
-										onChange={(e) =>
-											setNome(e.target.value)
-										}
+										onChange={(e) => setNome(e.target.value)}
 										required
 									/>
 								</div>
 								<div className="form-control mt-4">
 									<label className="label">
-										<span className="label-text">
-											Email
-										</span>
+										<span className="label-text">Email</span>
 									</label>
 									<input
 										type="email"
 										placeholder="teu@email.com"
 										className="input input-bordered"
 										value={email}
-										onChange={(e) =>
-											setEmail(e.target.value)
-										}
+										onChange={(e) => setEmail(e.target.value)}
 										required
 									/>
 								</div>
 								<div className="form-control mt-4">
 									<label className="label">
-										<span className="label-text">
-											Contrasinal
-										</span>
+										<span className="label-text">Contrasinal</span>
 									</label>
 									<input
 										type="password"
 										placeholder="••••••••"
 										className="input input-bordered"
 										value={password}
-										onChange={(e) =>
-											setPassword(e.target.value)
-										}
+										onChange={(e) => setPassword(e.target.value)}
 										required
 									/>
 								</div>
@@ -230,32 +209,19 @@ const Login = ({ onLogin }: LoginProps) => {
 										accept="image/*"
 										className="file-input file-input-bordered"
 										onChange={(e) =>
-											setImaxeUser(
-												e.target.files
-													? e.target.files[0]
-													: null
-											)
+											setImaxeUser(e.target.files ? e.target.files[0] : null)
 										}
 									/>
 								</div>
 
-								{error && (
-									<Alert onClose={() => setError('')}>
-										{error}
-									</Alert>
-								)}
+								{error && <Alert onClose={() => setError('')}>{error}</Alert>}
 								{registerSuccess && (
 									<div className="alert alert-success mt-4">
-										<span>
-											Usuario creado. Podes iniciar sesión
-										</span>
+										<span>Usuario creado. Podes iniciar sesión</span>
 									</div>
 								)}
 								<div className="form-control mt-6">
-									<button
-										type="submit"
-										className="btn btn-primary"
-									>
+									<button type="submit" className="btn btn-primary">
 										Crear Conta
 									</button>
 								</div>
@@ -280,48 +246,33 @@ const Login = ({ onLogin }: LoginProps) => {
 							<form onSubmit={handleSubmit}>
 								<div className="form-control">
 									<label className="label">
-										<span className="label-text">
-											Nome de usuario
-										</span>
+										<span className="label-text">Nome de usuario</span>
 									</label>
 									<input
 										type="text"
 										placeholder="Nome de usuario"
 										className="input input-bordered"
 										value={nome}
-										onChange={(e) =>
-											setNome(e.target.value)
-										}
+										onChange={(e) => setNome(e.target.value)}
 										required
 									/>
 								</div>
 								<div className="form-control mt-4">
 									<label className="label">
-										<span className="label-text">
-											Contrasinal
-										</span>
+										<span className="label-text">Contrasinal</span>
 									</label>
 									<input
 										type="password"
 										placeholder="••••••••"
 										className="input input-bordered"
 										value={password}
-										onChange={(e) =>
-											setPassword(e.target.value)
-										}
+										onChange={(e) => setPassword(e.target.value)}
 										required
 									/>
 								</div>
-								{error && (
-									<Alert onClose={() => setError('')}>
-										{error}
-									</Alert>
-								)}
+								{error && <Alert onClose={() => setError('')}>{error}</Alert>}
 								<div className="form-control mt-6">
-									<button
-										type="submit"
-										className="btn btn-primary"
-									>
+									<button type="submit" className="btn btn-primary">
 										Iniciar Sesión
 									</button>
 								</div>

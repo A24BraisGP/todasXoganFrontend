@@ -62,9 +62,7 @@ const Catalogo: React.FC<CatalogoProps> = ({
 						headers: {
 							Accept: 'application/json',
 							'Content-Type': 'application/json',
-							Authorization: `Token ${localStorage.getItem(
-								'token'
-							)}`,
+							Authorization: `Bearer ${localStorage.getItem('token')}`,
 						},
 						withCredentials: true,
 					}
@@ -78,9 +76,7 @@ const Catalogo: React.FC<CatalogoProps> = ({
 						headers: {
 							Accept: 'application/json',
 							'Content-Type': 'application/json',
-							Authorization: `Token ${localStorage.getItem(
-								'token'
-							)}`,
+							Authorization: `Bearer ${localStorage.getItem('token')}`,
 						},
 						withCredentials: true,
 					}
@@ -192,33 +188,25 @@ const Catalogo: React.FC<CatalogoProps> = ({
 
 						<div className="form-control">
 							<label className="label">
-								<span className="label-text">
-									Procura por Nome
-								</span>
+								<span className="label-text">Procura por Nome</span>
 							</label>
 							<input
 								type="text"
 								className="input input-bordered w-full"
 								value={filtroNome}
-								onChange={(e) =>
-									setFiltroNombre(e.target.value)
-								}
+								onChange={(e) => setFiltroNombre(e.target.value)}
 								placeholder="Nome do xogo..."
 							/>
 						</div>
 
 						<div className="form-control mt-4">
 							<label className="label">
-								<span className="label-text">
-									Accesibilidade
-								</span>
+								<span className="label-text">Accesibilidade</span>
 							</label>
 							<select
 								className="select select-bordered w-full"
 								value={filtroAccesibilidade}
-								onChange={(e) =>
-									setFiltroAccesibilidad(e.target.value)
-								}
+								onChange={(e) => setFiltroAccesibilidad(e.target.value)}
 							>
 								<option value="">Todas</option>
 								<option value="visual">Visual</option>
@@ -236,9 +224,7 @@ const Catalogo: React.FC<CatalogoProps> = ({
 							<select
 								className="select select-bordered w-full"
 								value={filtroXenero}
-								onChange={(e) =>
-									setFiltroGenero(e.target.value)
-								}
+								onChange={(e) => setFiltroGenero(e.target.value)}
 							>
 								<option value="">Todos</option>
 								{xeneros.map((xenero) => (
@@ -256,16 +242,11 @@ const Catalogo: React.FC<CatalogoProps> = ({
 							<select
 								className="select select-bordered w-full"
 								value={filtroPlataforma}
-								onChange={(e) =>
-									setFiltroPlataforma(e.target.value)
-								}
+								onChange={(e) => setFiltroPlataforma(e.target.value)}
 							>
 								<option value="">Todas</option>
 								{plataformas.map((plataforma) => (
-									<option
-										key={plataforma.id}
-										value={plataforma.id}
-									>
+									<option key={plataforma.id} value={plataforma.id}>
 										{plataforma.plataforma}
 									</option>
 								))}
@@ -274,18 +255,14 @@ const Catalogo: React.FC<CatalogoProps> = ({
 
 						<div className="form-control mt-4">
 							<label className="label">
-								<span className="label-text">
-									Rango de prezo (€)
-								</span>
+								<span className="label-text">Rango de prezo (€)</span>
 							</label>
 							<div className="flex gap-2">
 								<input
 									type="number"
 									className="input input-bordered w-full"
 									value={filtroPrezoMin}
-									onChange={(e) =>
-										setFiltroPrezoMin(e.target.value)
-									}
+									onChange={(e) => setFiltroPrezoMin(e.target.value)}
 									min="0"
 									step="1"
 									placeholder="Mín"
@@ -294,9 +271,7 @@ const Catalogo: React.FC<CatalogoProps> = ({
 									type="number"
 									className="input input-bordered w-full"
 									value={filtroPrezoMax}
-									onChange={(e) =>
-										setFiltroPrezoMax(e.target.value)
-									}
+									onChange={(e) => setFiltroPrezoMax(e.target.value)}
 									min="0"
 									step="1"
 									placeholder="Máx"
@@ -306,9 +281,7 @@ const Catalogo: React.FC<CatalogoProps> = ({
 
 						<div className="form-control mt-4">
 							<label className="label">
-								<span className="label-text">
-									Ordear por ...
-								</span>
+								<span className="label-text">Ordear por ...</span>
 							</label>
 							<select
 								className="select select-bordered w-full"
@@ -316,12 +289,8 @@ const Catalogo: React.FC<CatalogoProps> = ({
 								onChange={(e) => setOrdenarPor(e.target.value)}
 							>
 								<option value="">Ordear por...</option>
-								<option value="precio-asc">
-									Prezo: Menor a Maior
-								</option>
-								<option value="precio-desc">
-									Prezo: Maior a Menor
-								</option>
+								<option value="precio-asc">Prezo: Menor a Maior</option>
+								<option value="precio-desc">Prezo: Maior a Menor</option>
 								<option value="favoritos">Favoritos</option>
 							</select>
 						</div>
