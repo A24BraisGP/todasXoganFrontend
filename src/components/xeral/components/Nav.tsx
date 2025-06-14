@@ -45,7 +45,7 @@ const Nav = ({
 
 	return (
 		<nav className="navbar bg-base-100 shadow-lg">
-			<div className="navbar-start">
+			<div className="navbar-end">
 				<a
 					className="btn btn-ghost normal-case text-xl"
 					onClick={onHomeClick}

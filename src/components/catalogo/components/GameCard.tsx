@@ -32,41 +32,46 @@ const GameCard: React.FC<GameCardProps> = ({
 	isFavorito,
 }) => {
 	return (
-		<div className="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow duration-300">
+		<div className="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow duration-300 h-full flex flex-col">
 			<figure className="px-4 pt-4">
 				<img
 					src={xogo.caratula}
 					alt={xogo.titulo}
-					className="rounded-xl h-48 w-full object-cover"
+					className="rounded-xl h-32 sm:h-40 md:h-48 w-full object-cover"
 				/>
 			</figure>
-			<div className="card-body">
-				<h2 className="card-title">
-					{xogo.titulo}
-					<div className="badge badge-secondary">
+			<div className="card-body flex flex-col flex-grow p-2">
+				<div className="flex flex-col sm:flex-row justify-between items-start sm:items-baseline mb-1">
+					<h2 className="text-sm sm:text-base md:text-lg lg:text-xl font-semibold break-words flex-grow min-w-0 pr-2">
+						{xogo.titulo}
+					</h2>
+					<div className="badge badge-secondary text-xs flex-shrink-0 mt-1 sm:mt-0 sm:ml-auto">
 						+{xogo.idade_recomendada}
 					</div>
-				</h2>
-				<p className="text-sm text-base-content/70 mb-2">
+				</div>
+				<p className="text-xs text-base-content/70 mb-1">
 					Desarrollado por: {xogo.desarrolladora}
 				</p>
-				<p className="line-clamp-2 text-base-content/80">
+				<p className="line-clamp-2 text-xs text-base-content/80 mb-2">
 					{xogo.descricion}
 				</p>
-				<div className="flex flex-wrap gap-2 mt-2">
+				<div className="flex flex-wrap gap-1 mt-1 mb-2">
 					{xogo.accesibilidades.map((acc) => (
-						<div key={acc.id} className="badge badge-primary">
+						<div
+							key={acc.id}
+							className="badge badge-primary badge-xs sm:badge-sm"
+						>
 							{acc.nome_accesibilidade}
 						</div>
 					))}
 				</div>
-				<div className="card-actions justify-between items-center mt-4">
-					<div className="text-lg font-bold text-primary">
+				<div className="card-actions flex-wrap flex-col sm:flex-row justify-between items-center mt-auto pt-2">
+					<div className="text-base font-bold text-primary flex-shrink-0 mb-2 sm:mb-0">
 						{xogo.prezo}€
 					</div>
-					<div className="flex gap-2">
+					<div className="flex gap-1 w-full sm:w-auto justify-end flex-wrap">
 						<button
-							className="btn btn-primary"
+							className="btn btn-primary btn-sm text-xs w-full sm:w-auto"
 							onClick={() => onVerDetalles(xogo.id)}
 						>
 							Ver detalles
