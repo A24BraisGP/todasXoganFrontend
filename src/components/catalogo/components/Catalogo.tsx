@@ -123,26 +123,6 @@ const Catalogo = ({
 
 	return (
 		<div className="w-full grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-4 lg:gap-8">
-			{/* Columna de cartas de juegos */}
-			<div className="flex flex-col items-center w-full">
-				<div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
-					{xogosOrdenados.map((xogo) => (
-						<GameCard
-							key={xogo.id}
-							xogo={xogo}
-							onVerDetalles={onVerDetalles}
-							onToggleFavorito={onToggleFavorito}
-							isFavorito={favoritos.includes(xogo.id)}
-							accesibilidades={accesibilidades}
-						/>
-					))}
-				</div>
-				{xogosOrdenados.length === 0 && (
-					<div className="text-center text-lg mt-8">
-						Non se atoparon xogos...
-					</div>
-				)}
-			</div>
 			{/* Columna de filtros */}
 			<div className="w-full max-w-xs mx-auto lg:mx-0">
 				<div className="flex flex-col md:flex-row gap-4 mb-8">
@@ -286,6 +266,26 @@ const Catalogo = ({
 						</div>
 					</div>
 				</div>
+			</div>
+			{/* Columna de cartas de juegos */}
+			<div className="flex flex-col items-center w-full">
+				<div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
+					{xogosOrdenados.map((xogo) => (
+						<GameCard
+							key={xogo.id}
+							xogo={xogo}
+							onVerDetalles={onVerDetalles}
+							onToggleFavorito={onToggleFavorito}
+							isFavorito={favoritos.includes(xogo.id)}
+							accesibilidades={accesibilidades}
+						/>
+					))}
+				</div>
+				{xogosOrdenados.length === 0 && (
+					<div className="text-center text-lg mt-8">
+						Non se atoparon xogos...
+					</div>
+				)}
 			</div>
 		</div>
 	);
