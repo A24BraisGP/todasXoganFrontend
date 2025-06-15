@@ -23,7 +23,6 @@ interface Xogo {
 	accesibilidades: Array<{
 		id: number;
 		nome_accesibilidade: string;
-		descricion: string;
 	}>;
 	descricion: string;
 	prezo: number;
@@ -37,14 +36,20 @@ interface Xogo {
 interface AccesibilidadeType {
 	id: number;
 	nome_accesibilidade: string;
-	descricion: string;
 }
 
 interface Xenero {
 	id: number;
 	nome_xenero: string;
 }
-
+interface Comentario {
+	id: number;
+	comentario: string;
+	likes: number;
+	dislikes: number;
+	usuario: number;
+	videoxogo: number;
+}
 interface Plataforma {
 	id: number;
 	nome_plataforma: string;
@@ -72,7 +77,9 @@ function App() {
 	const [accesibilidades, setAccesibilidades] = useState<
 		AccesibilidadeType[]
 	>([]);
+	const [comentarios, setComentarios] = useState<Comentario[]>([]);
 	console.log('showLogin -> ' + showLogin);
+	console.log('comentarios -> ' + comentarios);
 	// Atallos de teclado
 	useEffect(() => {
 		const handleKeyDown = (event: KeyboardEvent) => {
@@ -133,6 +140,13 @@ function App() {
 			.then((response) => setAccesibilidades(response.data))
 			.catch((error) =>
 				console.error('Error ao cargar accesibilidades:', error)
+			);
+		// Petición para obter os comentarios
+		axios
+			.get('/api/comentarios/')
+			.then((response) => setComentarios(response.data))
+			.catch((error) =>
+				console.error('Erro ao cargar os comentarios : ', error)
 			);
 
 		// Comproba usuario
@@ -266,10 +280,8 @@ function App() {
 							accesibilidades={accesibilidades}
 							onVerDetalles={handleVerDetalles}
 							onToggleFavorito={handleToggleFavorito}
-							favoritos={
-								users.find((u) => u.id === userId)?.favoritos ||
-								[]
-							}
+							favoritos={users[0]?.favoritos || []}
+							userId={userId}
 						/>
 					</div>
 				);
@@ -308,6 +320,7 @@ function App() {
 								<XogoDetalle
 									xogoId={selectedGame!}
 									onVolver={() => setTab('catalogo')}
+									userId={userId}
 								/>
 							</div>
 						</div>

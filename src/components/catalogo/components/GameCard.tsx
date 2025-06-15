@@ -24,6 +24,7 @@ interface GameCardProps {
 	onToggleFavorito: (id: number) => void;
 	isFavorito: boolean;
 	accesibilidades: Accesibilidade[];
+	userId: number;
 }
 
 const GameCard = ({
@@ -32,6 +33,7 @@ const GameCard = ({
 	onToggleFavorito,
 	isFavorito,
 	accesibilidades,
+	userId,
 }: GameCardProps) => {
 	return (
 		<div className="card bg-base-100 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 motion-safe:hover:scale-105 h-full flex flex-col">
@@ -83,10 +85,12 @@ const GameCard = ({
 						>
 							Ver detalles
 						</button>
-						<Like
-							liked={isFavorito}
-							onClick={() => onToggleFavorito(xogo.id)}
-						/>
+						{userId > 0 && (
+							<Like
+								liked={isFavorito}
+								onClick={() => onToggleFavorito(xogo.id)}
+							/>
+						)}
 					</div>
 				</div>
 			</div>

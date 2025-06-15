@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
 import GameCard from './GameCard';
-
+import { useState } from 'react';
 interface Xogo {
 	id: number;
 	titulo: string;
@@ -37,6 +36,7 @@ interface CatalogoProps {
 	onVerDetalles: (id: number) => void;
 	onToggleFavorito: (id: number) => void;
 	favoritos: number[];
+	userId: number;
 }
 
 const Catalogo = ({
@@ -47,6 +47,7 @@ const Catalogo = ({
 	onVerDetalles,
 	onToggleFavorito,
 	favoritos,
+	userId,
 }: CatalogoProps) => {
 	const [filtroAccesibilidade, setFiltroAccesibilidad] = useState<string>('');
 	const [filtroXenero, setFiltroGenero] = useState<string>('');
@@ -266,6 +267,7 @@ const Catalogo = ({
 							onToggleFavorito={onToggleFavorito}
 							isFavorito={favoritos.includes(xogo.id)}
 							accesibilidades={accesibilidades}
+							userId={userId}
 						/>
 					))}
 				</div>
