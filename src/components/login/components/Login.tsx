@@ -43,9 +43,11 @@ const Login = ({ onLogin }: LoginProps) => {
 	const [error, setError] = useState('');
 	const [isRegister, setIsRegister] = useState(false);
 	const [registerSuccess, setRegisterSuccess] = useState(false);
+	const [showProcess, setShowProcess] = useState(false);
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
+		setShowProcess(true);
 		try {
 			const loginResponse = await axios.post('/api/usuarios/login/', {
 				nome: nome,
@@ -58,18 +60,27 @@ const Login = ({ onLogin }: LoginProps) => {
 					loginResponse.data.usuario.id.toString()
 				);
 				// Guardar el token si está presente en la respuesta
-				if (loginResponse.data.token) {
+				if (loginResponse.data.access) {
 					localStorage.setItem('token', loginResponse.data.access);
-					localStorage.setItem('refreshToken', loginResponse.data.refresh);
+					localStorage.setItem(
+						'refreshToken',
+						loginResponse.data.refresh
+					);
 				}
 
 				onLogin(loginResponse.data.usuario);
+				setShowProcess(false);
 				console.log('Login exitoso:', loginResponse.data.mensaje);
+				console.log(loginResponse);
 			} else {
+				setShowProcess(false);
 				console.error('Error de login - Datos:', loginResponse.data);
-				setError(loginResponse.data.error || 'Error no inicio de sesión');
+				setError(
+					loginResponse.data.error || 'Error no inicio de sesión'
+				);
 			}
 		} catch (err) {
+			setShowProcess(false);
 			console.error('Error inicio de sesión:', err);
 			if (axios.isAxiosError(err) && err.response) {
 				setError(err.response.data.error || 'Error inicio de sesión');
@@ -83,7 +94,7 @@ const Login = ({ onLogin }: LoginProps) => {
 		e.preventDefault();
 		setError('');
 		setRegisterSuccess(false);
-
+		setShowProcess(true);
 		const result = registerSchema.safeParse({
 			nome,
 			email,
@@ -92,6 +103,7 @@ const Login = ({ onLogin }: LoginProps) => {
 			preferencias,
 		});
 		if (!result.success) {
+			setShowProcess(false);
 			setError(result.error.errors[0].message);
 			return;
 		}
@@ -102,6 +114,7 @@ const Login = ({ onLogin }: LoginProps) => {
 			);
 
 			if (checkUserResponse.data.exists) {
+				setShowProcess(false);
 				setError('Este nome xa está en uso');
 				return;
 			}
@@ -132,6 +145,7 @@ const Login = ({ onLogin }: LoginProps) => {
 
 			console.log('Respuesta do servidor:', response.data);
 
+			setShowProcess(false);
 			setRegisterSuccess(true);
 			setEmail('');
 			setPassword('');
@@ -139,6 +153,7 @@ const Login = ({ onLogin }: LoginProps) => {
 			setImaxeUser(null);
 			setPreferencias([]);
 		} catch (err) {
+			setShowProcess(false);
 			console.error('Erro completo:', err);
 			if (axios.isAxiosError(err) && err.response) {
 				setError(err.response.data.detail || 'Erro ao crear usuario');
@@ -157,7 +172,10 @@ const Login = ({ onLogin }: LoginProps) => {
 							<h2 className="card-title text-2xl font-bold text-center mb-6">
 								Crear conta
 							</h2>
-							<form onSubmit={handleRegister} encType="multipart/form-data">
+							<form
+								onSubmit={handleRegister}
+								encType="multipart/form-data"
+							>
 								<div className="form-control">
 									<label className="label">
 										<span className="label-text">Nome</span>
@@ -167,33 +185,43 @@ const Login = ({ onLogin }: LoginProps) => {
 										placeholder="Nome"
 										className="input input-bordered"
 										value={nome}
-										onChange={(e) => setNome(e.target.value)}
+										onChange={(e) =>
+											setNome(e.target.value)
+										}
 										required
 									/>
 								</div>
 								<div className="form-control mt-4">
 									<label className="label">
-										<span className="label-text">Email</span>
+										<span className="label-text">
+											Email
+										</span>
 									</label>
 									<input
 										type="email"
 										placeholder="teu@email.com"
 										className="input input-bordered"
 										value={email}
-										onChange={(e) => setEmail(e.target.value)}
+										onChange={(e) =>
+											setEmail(e.target.value)
+										}
 										required
 									/>
 								</div>
 								<div className="form-control mt-4">
 									<label className="label">
-										<span className="label-text">Contrasinal</span>
+										<span className="label-text">
+											Contrasinal
+										</span>
 									</label>
 									<input
 										type="password"
 										placeholder="••••••••"
 										className="input input-bordered"
 										value={password}
-										onChange={(e) => setPassword(e.target.value)}
+										onChange={(e) =>
+											setPassword(e.target.value)
+										}
 										required
 									/>
 								</div>
@@ -208,19 +236,37 @@ const Login = ({ onLogin }: LoginProps) => {
 										accept="image/*"
 										className="file-input file-input-bordered"
 										onChange={(e) =>
-											setImaxeUser(e.target.files ? e.target.files[0] : null)
+											setImaxeUser(
+												e.target.files
+													? e.target.files[0]
+													: null
+											)
 										}
 									/>
 								</div>
 
-								{error && <Alert onClose={() => setError('')}>{error}</Alert>}
+								{error && (
+									<Alert onClose={() => setError('')}>
+										{error}
+									</Alert>
+								)}
+								{showProcess && (
+									<div className="alert alert-info mt-4">
+										<span>Procesando creación...</span>
+									</div>
+								)}
 								{registerSuccess && (
 									<div className="alert alert-success mt-4">
-										<span>Usuario creado. Podes iniciar sesión</span>
+										<span>
+											Usuario creado. Podes iniciar sesión
+										</span>
 									</div>
 								)}
 								<div className="form-control mt-6">
-									<button type="submit" className="btn btn-primary">
+									<button
+										type="submit"
+										className="btn btn-primary"
+									>
 										Crear Conta
 									</button>
 								</div>
@@ -245,33 +291,53 @@ const Login = ({ onLogin }: LoginProps) => {
 							<form onSubmit={handleSubmit}>
 								<div className="form-control">
 									<label className="label">
-										<span className="label-text">Nome de usuario</span>
+										<span className="label-text">
+											Nome de usuario
+										</span>
 									</label>
 									<input
 										type="text"
 										placeholder="Nome de usuario"
 										className="input input-bordered"
 										value={nome}
-										onChange={(e) => setNome(e.target.value)}
+										onChange={(e) =>
+											setNome(e.target.value)
+										}
 										required
 									/>
 								</div>
 								<div className="form-control mt-4">
 									<label className="label">
-										<span className="label-text">Contrasinal</span>
+										<span className="label-text">
+											Contrasinal
+										</span>
 									</label>
 									<input
 										type="password"
 										placeholder="••••••••"
 										className="input input-bordered"
 										value={password}
-										onChange={(e) => setPassword(e.target.value)}
+										onChange={(e) =>
+											setPassword(e.target.value)
+										}
 										required
 									/>
 								</div>
-								{error && <Alert onClose={() => setError('')}>{error}</Alert>}
+								{error && (
+									<Alert onClose={() => setError('')}>
+										{error}
+									</Alert>
+								)}
+								{showProcess && (
+									<div className="alert alert-info mt-4">
+										<span>Procesando inicio...</span>
+									</div>
+								)}
 								<div className="form-control mt-6">
-									<button type="submit" className="btn btn-primary">
+									<button
+										type="submit"
+										className="btn btn-primary"
+									>
 										Iniciar Sesión
 									</button>
 								</div>

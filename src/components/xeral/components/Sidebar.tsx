@@ -1,4 +1,11 @@
 import React, { useState } from 'react';
+import { FaHome } from 'react-icons/fa';
+import { FaGamepad } from 'react-icons/fa6';
+import { FaAccessibleIcon } from 'react-icons/fa6';
+import { FaRegStar } from 'react-icons/fa6';
+import { FaBars } from 'react-icons/fa6';
+import { FaCircleXmark } from 'react-icons/fa6';
+import { FaRegNoteSticky } from 'react-icons/fa6';
 
 interface SidebarProps {
 	tab: string;
@@ -6,19 +13,23 @@ interface SidebarProps {
 	isLoggedIn: boolean;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ tab, onClick, isLoggedIn }) => {
+const Sidebar = ({ tab, onClick, isLoggedIn }: SidebarProps) => {
 	const [isOpen, setIsOpen] = useState(false);
 
 	const tabs = [
-		{ id: 'inicio', label: 'Inicio', icon: '🏠' },
-		{ id: 'catalogo', label: 'Catálogo', icon: '🎮' },
-		{ id: 'accesibilidade', label: 'Accesibilidade', icon: '♿' },
+		{ id: 'inicio', label: 'Inicio', icon: <FaHome /> },
+		{ id: 'catalogo', label: 'Catálogo', icon: <FaGamepad /> },
+		{
+			id: 'accesibilidade',
+			label: 'Accesibilidade',
+			icon: <FaAccessibleIcon />,
+		},
 	];
 
 	if (isLoggedIn) {
 		tabs.push(
-			{ id: 'perfil', label: 'Perfil', icon: '👤' },
-			{ id: 'propostas', label: 'Propostas', icon: '📝' }
+			{ id: 'perfil', label: 'Favoritos', icon: <FaRegStar /> },
+			{ id: 'propostas', label: 'Propostas', icon: <FaRegNoteSticky /> }
 		);
 	}
 
@@ -36,7 +47,7 @@ const Sidebar: React.FC<SidebarProps> = ({ tab, onClick, isLoggedIn }) => {
 				onClick={() => setIsOpen(!isOpen)}
 				aria-label="Toggle menu"
 			>
-				{isOpen ? '✕' : '☰'}
+				{isOpen ? <FaCircleXmark /> : <FaBars />}
 			</button>
 			<aside
 				className={`fixed lg:static w-64 min-h-full bg-base-200 text-base-content p-4 transform transition-transform duration-300 ease-in-out ${

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import Alert from './login/components/Alert';
+import Alert from '../../login/components/Alert';
+import PropostaCard from './PropostaCard';
 
 interface Proposta {
 	id: number;
@@ -27,15 +28,42 @@ interface Usuario {
 	admin: boolean;
 }
 
+interface Accesibilidade {
+	id: number;
+	nome_accesibilidade: string;
+}
+
 const PropostasEnviadas = () => {
 	const [propostas, setPropostas] = useState<Proposta[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 	const [usuarios, setUsuarios] = useState<{ [key: number]: string }>({});
+	const [accesibilidades, setAccesibilidades] = useState<Accesibilidade[]>(
+		[]
+	);
 
 	useEffect(() => {
 		cargarPropostas();
+		cargarAccesibilidades();
 	}, []);
+
+	const cargarAccesibilidades = async () => {
+		try {
+			const response = await axios.get<Accesibilidade[]>(
+				'https://restapitodasxogan.onrender.com/api/accesibilidades/',
+				{
+					headers: {
+						'Content-Type': 'application/json',
+						Accept: 'application/json',
+					},
+					withCredentials: true,
+				}
+			);
+			setAccesibilidades(response.data);
+		} catch (err) {
+			console.error('Error ao cargar accesibilidades:', err);
+		}
+	};
 
 	const cargarPropostas = async () => {
 		try {
@@ -52,7 +80,9 @@ const PropostasEnviadas = () => {
 			setPropostas(response.data);
 
 			// Obtener los nombres de usuario para cada propuesta
-			const userIds = [...new Set(response.data.map((p) => p.usuario_id))];
+			const userIds = [
+				...new Set(response.data.map((p) => p.usuario_id)),
+			];
 			const usuariosTemp: { [key: number]: string } = {};
 
 			for (const id of userIds) {
@@ -124,36 +154,57 @@ const PropostasEnviadas = () => {
 				{
 					headers: {
 						'Content-Type': 'multipart/form-data',
-						Authorization: `Bearer ${localStorage.getItem('token')}`,
+						Authorization: `Bearer ${localStorage.getItem(
+							'token'
+						)}`,
 					},
 					withCredentials: true,
 				}
 			);
 
-			if (xogoResponse.status === 200) {
-				console.log('Actualizando estado de la propuesta a APROBADA...');
-				const updateData = { estado: 'APROBADA' };
-				console.log('Datos a enviar:', updateData);
-
-				const response = await axios.patch(
-					`https://restapitodasxogan.onrender.com/api/propostas/${proposta.id}/`,
-					updateData,
-					{
-						headers: {
-							'Content-Type': 'application/json',
-							Accept: 'application/json',
-							Authorization: `Bearer ${localStorage.getItem('token')}`,
-						},
-						withCredentials: true,
-					}
+			if (xogoResponse.status === 200 || xogoResponse.status === 201) {
+				console.log(
+					'Actualizando estado de la propuesta a APROBADA...'
 				);
 
-				console.log('Respuesta del servidor:', response.data);
+				try {
+					const response = await axios.patch(
+						`https://restapitodasxogan.onrender.com/api/propostas/${proposta.id}/revision/`,
+						{ estado: 'APROBADA' },
+						{
+							headers: {
+								'Content-Type': 'application/json',
+								Accept: 'application/json',
+								Authorization: `Bearer ${localStorage.getItem(
+									'token'
+								)}`,
+							},
+							withCredentials: true,
+						}
+					);
 
-				if (response.status === 200) {
-					// Eliminar la propuesta de la lista (solo visualmente)
-					setPropostas(propostas.filter((p) => p.id !== proposta.id));
-				} else {
+					console.log('Respuesta del servidor:', response.data);
+
+					if (response.status === 200) {
+						// Eliminar la propuesta de la lista (solo visualmente)
+						setPropostas(
+							propostas.filter((p) => p.id !== proposta.id)
+						);
+					} else {
+						setError('Erro ao actualizar o estado da proposta');
+					}
+				} catch (updateError) {
+					console.error(
+						'Error al actualizar el estado:',
+						updateError
+					);
+					if (axios.isAxiosError(updateError)) {
+						console.error('Datos del error:', {
+							status: updateError.response?.status,
+							data: updateError.response?.data,
+							headers: updateError.response?.headers,
+						});
+					}
 					setError('Erro ao actualizar o estado da proposta');
 				}
 			} else {
@@ -175,17 +226,17 @@ const PropostasEnviadas = () => {
 	const handleRechazar = async (propostaId: number) => {
 		try {
 			console.log('Actualizando estado de la propuesta a REXEITADA...');
-			const updateData = { estado: 'REXEITADA' };
-			console.log('Datos a enviar:', updateData);
 
 			const response = await axios.patch(
-				`https://restapitodasxogan.onrender.com/api/propostas/${propostaId}/`,
-				updateData,
+				`https://restapitodasxogan.onrender.com/api/propostas/${propostaId}/revision/`,
+				{ estado: 'REXEITADA' },
 				{
 					headers: {
 						'Content-Type': 'application/json',
 						Accept: 'application/json',
-						Authorization: `Bearer ${localStorage.getItem('token')}`,
+						Authorization: `Bearer ${localStorage.getItem(
+							'token'
+						)}`,
 					},
 					withCredentials: true,
 				}
@@ -194,7 +245,6 @@ const PropostasEnviadas = () => {
 			console.log('Respuesta del servidor:', response.data);
 
 			if (response.status === 200) {
-				// Eliminar la propuesta de la lista (solo visualmente)
 				setPropostas(propostas.filter((p) => p.id !== propostaId));
 			} else {
 				setError('Erro ao actualizar o estado da proposta');
@@ -227,67 +277,92 @@ const PropostasEnviadas = () => {
 	return (
 		<div className="container mx-auto p-4">
 			<h2 className="text-2xl font-bold mb-6">Propostas Enviadas</h2>
-			<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-				{propostas
-					.filter((proposta) => proposta.estado === 'PENDENTE')
-					.map((proposta) => (
-						<div key={proposta.id} className="card bg-base-100 shadow-xl">
-							<figure>
-								<img
-									src={proposta.caratula}
-									alt={proposta.titulo}
-									className="w-full h-48 object-cover"
-								/>
-							</figure>
-							<div className="card-body">
-								<h2 className="card-title">{proposta.titulo}</h2>
-								<p className="line-clamp-3">{proposta.descricion}</p>
-								<div className="flex flex-wrap gap-2 mt-2">
-									<div className="badge badge-primary">
-										{proposta.idade_recomendada}+
-									</div>
-									<div className="badge badge-secondary">{proposta.prezo}€</div>
-									<div className="badge badge-accent">
-										Enviado por:{' '}
-										{usuarios[proposta.usuario_id] || 'Cargando...'}
-									</div>
-									<div
-										className={`badge ${
-											proposta.estado === 'APROBADA'
-												? 'badge-success'
-												: proposta.estado === 'REXEITADA'
-												? 'badge-error'
-												: 'badge-warning'
-										}`}
-									>
-										{proposta.estado}
-									</div>
-								</div>
-								{proposta.estado === 'PENDENTE' && (
-									<div className="card-actions justify-end mt-4">
-										<button
-											className="btn btn-success btn-sm"
-											onClick={() => handleAceptar(proposta)}
-										>
-											Aceptar
-										</button>
-										<button
-											className="btn btn-error btn-sm"
-											onClick={() => handleRechazar(proposta.id)}
-										>
-											Rexeitar
-										</button>
-									</div>
-								)}
-							</div>
-						</div>
-					))}
-			</div>
-			{propostas.filter((p) => p.estado === 'PENDENTE').length === 0 && (
-				<div className="text-center mt-8">
-					<p className="text-lg">Non hai propostas pendentes</p>
+
+			{/* Propostas Pendentes */}
+			<div className="mb-8">
+				<h3 className="text-xl font-semibold mb-4 text-primary">
+					Propostas Pendentes
+				</h3>
+				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+					{propostas
+						.filter((proposta) => proposta.estado === 'PENDENTE')
+						.map((proposta) => (
+							<PropostaCard
+								key={proposta.id}
+								proposta={proposta}
+								onAceptar={handleAceptar}
+								onRechazar={handleRechazar}
+								showActions={true}
+								userName={usuarios[proposta.usuario_id]}
+								accesibilidades={accesibilidades}
+							/>
+						))}
 				</div>
-			)}
+				{propostas.filter((p) => p.estado === 'PENDENTE').length ===
+					0 && (
+					<div className="text-center mt-4">
+						<p className="text-lg text-gray-500">
+							Non hai propostas pendentes
+						</p>
+					</div>
+				)}
+			</div>
+
+			{/* Propostas Aprobadas */}
+			<div className="mb-8">
+				<h3 className="text-xl font-semibold mb-4 text-success">
+					Propostas Aprobadas
+				</h3>
+				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+					{propostas
+						.filter((proposta) => proposta.estado === 'APROBADA')
+						.map((proposta) => (
+							<PropostaCard
+								key={proposta.id}
+								proposta={proposta}
+								showActions={false}
+								userName={usuarios[proposta.usuario_id]}
+								accesibilidades={accesibilidades}
+							/>
+						))}
+				</div>
+				{propostas.filter((p) => p.estado === 'APROBADA').length ===
+					0 && (
+					<div className="text-center mt-4">
+						<p className="text-lg text-gray-500">
+							Non hai propostas aprobadas
+						</p>
+					</div>
+				)}
+			</div>
+
+			{/* Propostas Rechazadas */}
+			<div className="mb-8">
+				<h3 className="text-xl font-semibold mb-4 text-error">
+					Propostas Rechazadas
+				</h3>
+				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+					{propostas
+						.filter((proposta) => proposta.estado === 'REXEITADA')
+						.map((proposta) => (
+							<PropostaCard
+								key={proposta.id}
+								proposta={proposta}
+								showActions={false}
+								userName={usuarios[proposta.usuario_id]}
+								accesibilidades={accesibilidades}
+							/>
+						))}
+				</div>
+				{propostas.filter((p) => p.estado === 'REXEITADA').length ===
+					0 && (
+					<div className="text-center mt-4">
+						<p className="text-lg text-gray-500">
+							Non hai propostas rechazadas
+						</p>
+					</div>
+				)}
+			</div>
 		</div>
 	);
 };

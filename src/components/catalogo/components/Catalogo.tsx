@@ -1,15 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { useState } from 'react';
 import GameCard from './GameCard';
 
 interface Xogo {
 	id: number;
 	titulo: string;
-	accesibilidades: Array<{
-		id: number;
-		nome_accesibilidade: string;
-		descricion: string;
-	}>;
+	accesibilidades: Array<number>;
 	descricion: string;
 	prezo: number;
 	idade_recomendada: number;
@@ -29,19 +24,30 @@ interface Plataforma {
 	plataforma: string;
 }
 
+interface Accesibilidade {
+	id: number;
+	nome_accesibilidade: string;
+}
+
 interface CatalogoProps {
 	xogos: Xogo[];
+	xeneros: Xenero[];
+	plataformas: Plataforma[];
+	accesibilidades: Accesibilidade[];
 	onVerDetalles: (id: number) => void;
 	onToggleFavorito: (id: number) => void;
 	favoritos: number[];
 }
 
-const Catalogo: React.FC<CatalogoProps> = ({
+const Catalogo = ({
 	xogos,
+	xeneros,
+	plataformas,
+	accesibilidades,
 	onVerDetalles,
 	onToggleFavorito,
 	favoritos,
-}) => {
+}: CatalogoProps) => {
 	const [filtroAccesibilidade, setFiltroAccesibilidad] = useState<string>('');
 	const [filtroXenero, setFiltroGenero] = useState<string>('');
 	const [filtroPlataforma, setFiltroPlataforma] = useState<string>('');
@@ -49,44 +55,6 @@ const Catalogo: React.FC<CatalogoProps> = ({
 	const [filtroPrezoMax, setFiltroPrezoMax] = useState<string>('');
 	const [filtroNome, setFiltroNombre] = useState<string>('');
 	const [ordearPor, setOrdenarPor] = useState<string>('');
-	const [xeneros, setXeneros] = useState<Xenero[]>([]);
-	const [plataformas, setPlataformas] = useState<Plataforma[]>([]);
-
-	useEffect(() => {
-		const fetchData = async () => {
-			try {
-				// Cargar xeneros da api para facelo dinámico
-				const xenerosResponse = await axios.get(
-					'https://restapitodasxogan.onrender.com/api/xeneros/',
-					{
-						headers: {
-							Accept: 'application/json',
-							'Content-Type': 'application/json',
-						},
-						withCredentials: true,
-					}
-				);
-				setXeneros(xenerosResponse.data);
-
-				// Cargar plataformas da api para facelo dinámico
-				const plataformasResponse = await axios.get(
-					'https://restapitodasxogan.onrender.com/api/plataformas/',
-					{
-						headers: {
-							Accept: 'application/json',
-							'Content-Type': 'application/json',
-						},
-						withCredentials: true,
-					}
-				);
-				setPlataformas(plataformasResponse.data);
-			} catch (error) {
-				console.error('Error:', error);
-			}
-		};
-
-		fetchData();
-	}, []);
 
 	const xogosFiltrados = xogos.filter((xogo) => {
 		// Filtro por nome
@@ -100,11 +68,7 @@ const Catalogo: React.FC<CatalogoProps> = ({
 		// Filtro por accesibilidade
 		if (
 			filtroAccesibilidade &&
-			!xogo.accesibilidades.some(
-				(acc) =>
-					acc.nome_accesibilidade.toLowerCase() ===
-					filtroAccesibilidade.toLowerCase()
-			)
+			!xogo.accesibilidades.includes(Number(filtroAccesibilidade))
 		) {
 			return false;
 		}
@@ -169,6 +133,7 @@ const Catalogo: React.FC<CatalogoProps> = ({
 							onVerDetalles={onVerDetalles}
 							onToggleFavorito={onToggleFavorito}
 							isFavorito={favoritos.includes(xogo.id)}
+							accesibilidades={accesibilidades}
 						/>
 					))}
 				</div>
@@ -215,11 +180,11 @@ const Catalogo: React.FC<CatalogoProps> = ({
 								}
 							>
 								<option value="">Todas</option>
-								<option value="visual">Visual</option>
-								<option value="auditiva">Auditiva</option>
-								<option value="motora">Motora</option>
-								<option value="cognitiva">Cognitiva</option>
-								<option value="sensorial">Sensorial</option>
+								{accesibilidades.map((acc) => (
+									<option key={acc.id} value={acc.id}>
+										{acc.nome_accesibilidade}
+									</option>
+								))}
 							</select>
 						</div>
 

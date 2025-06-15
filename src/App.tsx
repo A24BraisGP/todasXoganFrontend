@@ -8,8 +8,8 @@ import Footer from './components/xeral/components/Footer';
 import Login from './components/login/components/Login';
 import XogoDetalle from './components/detalles/components/XogoDetalle';
 import Favoritos from './components/favoritos/components/Favoritos';
-import PropostaForm from './components/PropostaForm';
-import PropostasEnviadas from './components/PropostasEnviadas';
+import PropostaForm from './components/propostas/components/PropostaForm';
+import PropostasEnviadas from './components/propostas/components/PropostasEnviadas';
 import Accesibilidade from './components/Accesibilidade';
 
 // Configuración global de axios
@@ -40,6 +40,16 @@ interface AccesibilidadeType {
 	descricion: string;
 }
 
+interface Xenero {
+	id: number;
+	nome_xenero: string;
+}
+
+interface Plataforma {
+	id: number;
+	nome_plataforma: string;
+}
+
 interface Usuario {
 	id: number;
 	favoritos: number[];
@@ -57,7 +67,12 @@ function App() {
 	const [userId, setUserId] = useState(0);
 	const [showLogin, setShowLogin] = useState(false);
 	const [selectedGame, setSelectedGame] = useState<number | null>(null);
-	console.log(showLogin);
+	const [xeneros, setXeneros] = useState<Xenero[]>([]);
+	const [plataformas, setPlataformas] = useState<Plataforma[]>([]);
+	const [accesibilidades, setAccesibilidades] = useState<
+		AccesibilidadeType[]
+	>([]);
+	console.log('showLogin -> ' + showLogin);
 	// Atallos de teclado
 	useEffect(() => {
 		const handleKeyDown = (event: KeyboardEvent) => {
@@ -97,6 +112,28 @@ function App() {
 			.get('/api/videoxogos/')
 			.then((response) => setXogos(response.data))
 			.catch((error) => console.error('Error:', error));
+
+		// Petición para obtener xéneros
+		axios
+			.get('/api/xeneros/')
+			.then((response) => setXeneros(response.data))
+			.catch((error) => console.error('Error ao cargar xéneros:', error));
+
+		// Petición para obtener plataformas
+		axios
+			.get('/api/plataformas/')
+			.then((response) => setPlataformas(response.data))
+			.catch((error) =>
+				console.error('Error ao cargar plataformas:', error)
+			);
+
+		// Petición para obtener accesibilidades
+		axios
+			.get('/api/accesibilidades/')
+			.then((response) => setAccesibilidades(response.data))
+			.catch((error) =>
+				console.error('Error ao cargar accesibilidades:', error)
+			);
 
 		// Comproba usuario
 		const savedUserId = localStorage.getItem('userId');
@@ -224,6 +261,9 @@ function App() {
 					<div className="flex flex-col items-center w-full p-4">
 						<Catalogo
 							xogos={xogos}
+							xeneros={xeneros}
+							plataformas={plataformas}
+							accesibilidades={accesibilidades}
 							onVerDetalles={handleVerDetalles}
 							onToggleFavorito={handleToggleFavorito}
 							favoritos={
@@ -277,7 +317,7 @@ function App() {
 			case 'accesibilidade':
 				return (
 					<div className="flex flex-col items-center w-full p-4">
-						<Accesibilidade />
+						<Accesibilidade accesibilidades={accesibilidades} />
 					</div>
 				);
 			default:

@@ -40,7 +40,6 @@ const Nav = ({
 		if (userName) {
 			return getInitials(userName);
 		}
-		return '';
 	};
 
 	return (

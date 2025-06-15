@@ -1,5 +1,9 @@
-import { useState, useEffect } from 'react';
-import axios from 'axios';
+import { useState } from 'react';
+import { FaEye } from 'react-icons/fa';
+import { FaBrain } from 'react-icons/fa6';
+import { FaHandsAslInterpreting } from 'react-icons/fa6';
+import { FaUniversalAccess } from 'react-icons/fa';
+import { FaEarDeaf } from 'react-icons/fa6';
 
 interface Accesibilidade {
 	id: number;
@@ -7,10 +11,11 @@ interface Accesibilidade {
 	descricion: string;
 }
 
-const Accesibilidade = () => {
-	const [accesibilidades, setAccesibilidades] = useState<Accesibilidade[]>(
-		[]
-	);
+interface AccesibilidadeProps {
+	accesibilidades: Accesibilidade[];
+}
+
+const Accesibilidade = ({ accesibilidades }: AccesibilidadeProps) => {
 	const [activeOptions, setActiveOptions] = useState<{
 		[key: string]: boolean;
 	}>({
@@ -20,19 +25,6 @@ const Accesibilidade = () => {
 		dyslexia: false,
 		darkMode: false,
 	});
-
-	useEffect(() => {
-		const fetchAccesibilidades = async () => {
-			try {
-				const response = await axios.get('/api/accesibilidades/');
-				setAccesibilidades(response.data);
-			} catch (error) {
-				console.error('Error ao cargar accesibilidades:', error);
-			}
-		};
-
-		fetchAccesibilidades();
-	}, []);
 
 	const toggleOption = (option: string) => {
 		setActiveOptions((prev) => {
@@ -103,47 +95,47 @@ const Accesibilidade = () => {
 					</h2>
 					<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
 						<button
-							className="btn btn-lg btn-primary"
+							className="btn btn-lg btn-primary p-8"
 							onClick={() => activatePreset('visual')}
 						>
 							<div className="flex flex-col items-center">
-								<span className="text-xl">👁️</span>
+								<FaEye />
 								<span>Visual</span>
 							</div>
 						</button>
 						<button
-							className="btn btn-lg btn-primary"
+							className="btn btn-lg btn-primary p-8"
 							onClick={() => activatePreset('cognitiva')}
 						>
 							<div className="flex flex-col items-center">
-								<span className="text-xl">🧠</span>
+								<FaBrain />
 								<span>Cognitiva</span>
 							</div>
 						</button>
 						<button
-							className="btn btn-lg btn-primary"
+							className="btn btn-lg btn-primary p-8"
 							onClick={() => activatePreset('motora')}
 						>
 							<div className="flex flex-col items-center">
-								<span className="text-xl">🖐️</span>
+								<FaHandsAslInterpreting />
 								<span>Motora</span>
 							</div>
 						</button>
 						<button
-							className="btn btn-lg btn-primary"
+							className="btn btn-lg btn-primary p-8"
 							onClick={() => activatePreset('auditiva')}
 						>
 							<div className="flex flex-col items-center">
-								<span className="text-xl">👂</span>
+								<FaEarDeaf />
 								<span>Auditiva</span>
 							</div>
 						</button>
 						<button
-							className="btn btn-lg btn-primary"
+							className="btn btn-lg btn-primary p-8"
 							onClick={() => activatePreset('sensorial')}
 						>
 							<div className="flex flex-col items-center">
-								<span className="text-xl">🎨</span>
+								<FaUniversalAccess />
 								<span>Sensorial</span>
 							</div>
 						</button>

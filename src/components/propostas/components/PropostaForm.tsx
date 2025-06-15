@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { z } from 'zod';
 import axios from 'axios';
-import Alert from './login/components/Alert';
+import Alert from '../../login/components/Alert';
 
 // Esquema de validación para propostas
 const propostaSchema = z.object({
