@@ -25,7 +25,7 @@ const Accesibilidade = ({ accesibilidades }: AccesibilidadeProps) => {
 		dyslexia: false,
 		darkMode: false,
 	});
-
+	// TODO implementar + opcións (ARIA)
 	const toggleOption = (option: string) => {
 		setActiveOptions((prev) => {
 			const newState = { ...prev, [option]: !prev[option] };
