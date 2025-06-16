@@ -47,14 +47,14 @@ const GameCard = ({
 			</figure>
 			<div className="card-body flex flex-col flex-grow p-2">
 				<div className="flex flex-col sm:flex-row justify-between items-start sm:items-baseline mb-1">
-					<h2 className="text-sm sm:text-base md:text-lg lg:text-xl font-semibold break-words flex-grow min-w-0 pr-2">
+					<h2 className="text-lg sm:text-base md:text-lg lg:text-xl font-bold break-words flex-grow min-w-0 pr-2">
 						{xogo.titulo}
 					</h2>
 					<div className="badge badge-secondary text-xs flex-shrink-0 mt-1 sm:mt-0 sm:ml-auto">
 						+{xogo.idade_recomendada}
 					</div>
 				</div>
-				<p className="text-ml  text-base-content/70 mb-1">
+				<p className="text-ml font-semibold text-base-content/70 mb-1">
 					Desarrollado por: {xogo.desarrolladora}
 				</p>
 				<p className="line-clamp-2 text-xs text-base-content/80 mb-2">
