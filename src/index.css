@@ -121,9 +121,9 @@
 	--noise: 1;
 }
 
-/* Estilos para opciones de accesibilidad */
 .large-text {
-	font-size: 1.2em;
+	font-size: 1.25rem;
+	line-height: 1.5;
 }
 
 .large-text h1 {
@@ -139,43 +139,21 @@
 }
 
 .reduced-motion * {
-	animation: none !important;
-	transition: none !important;
+	animation-duration: 0.001ms !important;
+	animation-iteration-count: 1 !important;
+	transition-duration: 0.001ms !important;
+	scroll-behavior: auto !important;
+}
+
+.reduced-motion .motion-safe\:hover\:scale-105:hover {
+	transform: none !important;
 }
 
 .dyslexia-friendly {
-	font-family: 'OpenDyslexic', Arial, sans-serif;
-	line-height: 1.5;
+	font-family: 'OpenDyslexic', 'Comic Sans MS', sans-serif;
 	letter-spacing: 0.12em;
 	word-spacing: 0.16em;
-}
-
-.dark-mode {
-	--primary: #1a1a1a;
-	--secondary: #2d2d2d;
-	--accent: #4a9eff;
-	--text: #ffffff;
-	--background: #121212;
-	color: var(--text);
-	background-color: var(--background);
-}
-
-.dark-mode * {
-	color: var(--text);
-	background-color: var(--background);
-}
-
-.dark-mode .card {
-	background-color: var(--secondary);
-}
-
-.dark-mode .btn {
-	background-color: var(--accent);
-	color: var(--text);
-}
-
-.dark-mode .btn:hover {
-	background-color: var(--primary);
+	line-height: 1.5;
 }
 
 @keyframes slide-left {

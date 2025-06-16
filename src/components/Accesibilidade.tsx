@@ -18,14 +18,49 @@ interface AccesibilidadeProps {
 const Accesibilidade = ({ accesibilidades }: AccesibilidadeProps) => {
 	const [activeOptions, setActiveOptions] = useState<{
 		[key: string]: boolean;
-	}>({
-		highContrast: false,
-		largeText: false,
-		reducedMotion: false,
-		dyslexia: false,
-		darkMode: false,
+	}>(() => {
+		// Intentar recuperar las opciones del localStorage
+		const savedOptions = localStorage.getItem('accesibilidadeOptions');
+		if (savedOptions) {
+			const parsedOptions = JSON.parse(savedOptions);
+			// Aplicar las opciones guardadas
+			Object.entries(parsedOptions).forEach(([option, value]) => {
+				if (value) {
+					if (option === 'highContrast') {
+						document.documentElement.setAttribute(
+							'data-theme',
+							'high-contrast'
+						);
+					} else if (option === 'largeText') {
+						document.documentElement.classList.add('large-text');
+					} else if (option === 'reducedMotion') {
+						document.documentElement.classList.add(
+							'reduced-motion'
+						);
+					} else if (option === 'dyslexia') {
+						document.documentElement.classList.add(
+							'dyslexia-friendly'
+						);
+					} else if (option === 'darkMode') {
+						document.documentElement.setAttribute(
+							'data-theme',
+							'dark'
+						);
+					}
+				}
+			});
+			return parsedOptions;
+		}
+		// Si no hay opciones guardadas, usar valores por defecto
+		return {
+			highContrast: false,
+			largeText: false,
+			reducedMotion: false,
+			dyslexia: false,
+			darkMode: false,
+		};
 	});
-	// TODO implementar + opcións (ARIA)
+
 	const toggleOption = (option: string) => {
 		setActiveOptions((prev) => {
 			const newState = { ...prev, [option]: !prev[option] };
@@ -48,17 +83,25 @@ const Accesibilidade = ({ accesibilidades }: AccesibilidadeProps) => {
 				);
 			}
 
+			// Guardar en localStorage
+			localStorage.setItem(
+				'accesibilidadeOptions',
+				JSON.stringify(newState)
+			);
+
 			return newState;
 		});
 	};
 
 	const activatePreset = (preset: string) => {
+		// Desactivar todas las opciones actuales
 		Object.keys(activeOptions).forEach((option) => {
 			if (activeOptions[option]) {
 				toggleOption(option);
 			}
 		});
 
+		// Activar las opciones del preset
 		switch (preset) {
 			case 'visual':
 				toggleOption('highContrast');
@@ -76,7 +119,6 @@ const Accesibilidade = ({ accesibilidades }: AccesibilidadeProps) => {
 				toggleOption('reducedMotion');
 				break;
 			case 'sensorial':
-				toggleOption('darkMode');
 				toggleOption('reducedMotion');
 				break;
 		}
@@ -95,7 +137,7 @@ const Accesibilidade = ({ accesibilidades }: AccesibilidadeProps) => {
 					</h2>
 					<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
 						<button
-							className="btn btn-lg btn-primary p-8"
+							className="btn btn-lg btn-primary p-8 transition-all duration-300 hover:scale-105 motion-safe:hover:scale-105"
 							onClick={() => activatePreset('visual')}
 						>
 							<div className="flex flex-col items-center">
@@ -104,7 +146,7 @@ const Accesibilidade = ({ accesibilidades }: AccesibilidadeProps) => {
 							</div>
 						</button>
 						<button
-							className="btn btn-lg btn-primary p-8"
+							className="btn btn-lg btn-primary p-8 transition-all duration-300 hover:scale-105 motion-safe:hover:scale-105"
 							onClick={() => activatePreset('cognitiva')}
 						>
 							<div className="flex flex-col items-center">
@@ -113,7 +155,7 @@ const Accesibilidade = ({ accesibilidades }: AccesibilidadeProps) => {
 							</div>
 						</button>
 						<button
-							className="btn btn-lg btn-primary p-8"
+							className="btn btn-lg btn-primary p-8 transition-all duration-300 hover:scale-105 motion-safe:hover:scale-105"
 							onClick={() => activatePreset('motora')}
 						>
 							<div className="flex flex-col items-center">
@@ -122,7 +164,7 @@ const Accesibilidade = ({ accesibilidades }: AccesibilidadeProps) => {
 							</div>
 						</button>
 						<button
-							className="btn btn-lg btn-primary p-8"
+							className="btn btn-lg btn-primary p-8 transition-all duration-300 hover:scale-105 motion-safe:hover:scale-105"
 							onClick={() => activatePreset('auditiva')}
 						>
 							<div className="flex flex-col items-center">
@@ -131,7 +173,7 @@ const Accesibilidade = ({ accesibilidades }: AccesibilidadeProps) => {
 							</div>
 						</button>
 						<button
-							className="btn btn-lg btn-primary p-8"
+							className="btn btn-lg btn-primary p-8 transition-all duration-300 hover:scale-105 motion-safe:hover:scale-105"
 							onClick={() => activatePreset('sensorial')}
 						>
 							<div className="flex flex-col items-center">
@@ -145,9 +187,9 @@ const Accesibilidade = ({ accesibilidades }: AccesibilidadeProps) => {
 				<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 					<div className="card bg-base-200 shadow-xl">
 						<div className="card-body">
-							<h2 className="card-title text-xl mb-4">
+							<h3 className="card-title text-xl mb-4">
 								Axustes Visuais
-							</h2>
+							</h3>
 
 							<div className="space-y-4">
 								<button
@@ -177,9 +219,9 @@ const Accesibilidade = ({ accesibilidades }: AccesibilidadeProps) => {
 
 					<div className="card bg-base-200 shadow-xl">
 						<div className="card-body">
-							<h2 className="card-title text-xl mb-4">
+							<h3 className="card-title text-xl mb-4">
 								Axustes de Leitura
-							</h2>
+							</h3>
 
 							<div className="space-y-4">
 								<button
