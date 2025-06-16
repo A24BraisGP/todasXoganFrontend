@@ -137,15 +137,46 @@ const PropostasEnviadas = () => {
 				formData.append('accesibilidades', id.toString());
 			});
 
+			// --- CAMBIO CLAVE AQUÍ: MANEJAR LA CARÁTULA ---
 			if (proposta.caratula) {
 				try {
-					const response = await fetch(proposta.caratula);
-					const blob = await response.blob();
-					formData.append('caratula', blob, 'caratula.jpg');
-				} catch (error) {
-					console.error('Error al obtener la carátula:', error);
+					// 1. Descargar el contenido binario de la imagen desde la URL
+					const imageResponse = await axios.get(proposta.caratula, {
+						responseType: 'blob', // Indicar que esperamos una respuesta binaria
+					});
+
+					// 2. Crear un objeto File a partir del Blob descargado
+					// Necesitamos un nombre de archivo para el File. Puedes extraerlo de la URL.
+					const filename = proposta.caratula.substring(
+						proposta.caratula.lastIndexOf('/') + 1
+					);
+					// Puedes inferir el tipo de contenido desde la respuesta si es necesario,
+					// o usar imageResponse.headers['content-type']
+					const imageFile = new File([imageResponse.data], filename, {
+						type:
+							imageResponse.headers['content-type'] ||
+							'image/jpeg', // O el tipo MIME que esperes
+					});
+
+					// 3. Adjuntar el objeto File al FormData
+					formData.append('caratula', imageFile);
+
+					console.log(
+						'Archivo de carátula descargado y adjuntado:',
+						imageFile
+					);
+				} catch (imageDownloadError) {
+					console.error(
+						'Error al descargar la carátula desde la URL:',
+						imageDownloadError
+					);
+					// Manejar el error si no se puede descargar la imagen,
+					// quizás enviar sin imagen o mostrar un error al usuario.
+					setError('Error al procesar la carátula desde la URL');
+					return; // Detener la ejecución si la imagen es crítica
 				}
 			}
+			// ---
 
 			// Crear o xogo
 			const xogoResponse = await axios.post(
@@ -153,7 +184,6 @@ const PropostasEnviadas = () => {
 				formData,
 				{
 					headers: {
-						'Content-Type': 'multipart/form-data',
 						Authorization: `Bearer ${localStorage.getItem(
 							'token'
 						)}`,
@@ -265,7 +295,11 @@ const PropostasEnviadas = () => {
 	if (loading) {
 		return (
 			<div className="flex justify-center items-center min-h-screen">
-				<span className="loading loading-spinner loading-lg"></span>
+				<span
+					className="loading loading-spinner loading-lg"
+					role="status"
+					aria-label="Cargando propostas"
+				></span>
 			</div>
 		);
 	}
@@ -331,34 +365,6 @@ const PropostasEnviadas = () => {
 					<div className="text-center mt-4">
 						<p className="text-lg text-gray-500">
 							Non hai propostas aprobadas
-						</p>
-					</div>
-				)}
-			</div>
-
-			{/* Propostas Rechazadas */}
-			<div className="mb-8">
-				<h3 className="text-xl font-semibold mb-4 text-error">
-					Propostas Rechazadas
-				</h3>
-				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-					{propostas
-						.filter((proposta) => proposta.estado === 'REXEITADA')
-						.map((proposta) => (
-							<PropostaCard
-								key={proposta.id}
-								proposta={proposta}
-								showActions={false}
-								userName={usuarios[proposta.usuario_id]}
-								accesibilidades={accesibilidades}
-							/>
-						))}
-				</div>
-				{propostas.filter((p) => p.estado === 'REXEITADA').length ===
-					0 && (
-					<div className="text-center mt-4">
-						<p className="text-lg text-gray-500">
-							Non hai propostas rechazadas
 						</p>
 					</div>
 				)}

@@ -50,7 +50,7 @@ const Login = ({ onLogin }: LoginProps) => {
 		setShowProcess(true);
 		try {
 			const loginResponse = await axios.post('/api/usuarios/login/', {
-				nome: nome,
+				nome: cleanInput(nome),
 				password: password,
 			});
 
@@ -90,6 +90,10 @@ const Login = ({ onLogin }: LoginProps) => {
 		}
 	};
 
+	const cleanInput = (input: string) => {
+		return input.replace(/(<([^>]+)>)/gi, '');
+	};
+
 	const handleRegister = async (e: React.FormEvent) => {
 		e.preventDefault();
 		setError('');
@@ -120,10 +124,10 @@ const Login = ({ onLogin }: LoginProps) => {
 			}
 
 			const formData = new FormData();
-			formData.append('nome', nome);
-			formData.append('email', email);
+			formData.append('nome', cleanInput(nome));
+			formData.append('email', cleanInput(email));
 			formData.append('password', password);
-			formData.append('username', nome);
+			formData.append('username', cleanInput(nome));
 			if (imaxeUser) formData.append('imaxe_user', imaxeUser);
 
 			// Enviar preferencias como array vacío

@@ -13,9 +13,10 @@ interface Xogo {
 	desarrolladora: string;
 }
 
-interface Accesibilidade {
+interface AccesibilidadeType {
 	id: number;
 	nome_accesibilidade: string;
+	descricion: string;
 }
 
 interface GameCardProps {
@@ -23,7 +24,7 @@ interface GameCardProps {
 	onVerDetalles: (id: number) => void;
 	onToggleFavorito: (id: number) => void;
 	isFavorito: boolean;
-	accesibilidades: Accesibilidade[];
+	accesibilidades: AccesibilidadeType[];
 	userId: number;
 }
 
@@ -53,11 +54,13 @@ const GameCard = ({
 						+{xogo.idade_recomendada}
 					</div>
 				</div>
-				<p className="text-xs text-base-content/70 mb-1">
+				<p className="text-ml  text-base-content/70 mb-1">
 					Desarrollado por: {xogo.desarrolladora}
 				</p>
 				<p className="line-clamp-2 text-xs text-base-content/80 mb-2">
-					{xogo.descricion}
+					{xogo.descricion.length <= 100
+						? xogo.descricion
+						: xogo.descricion.slice(0, 100) + ' ... '}
 				</p>
 				<div className="flex flex-wrap gap-1 mt-1 mb-2">
 					{xogo.accesibilidades?.map((accId) => {

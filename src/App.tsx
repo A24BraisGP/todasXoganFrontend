@@ -20,10 +20,7 @@ axios.defaults.headers.common['Accept'] = 'application/json';
 interface Xogo {
 	id: number;
 	titulo: string;
-	accesibilidades: Array<{
-		id: number;
-		nome_accesibilidade: string;
-	}>;
+	accesibilidades: Array<number>;
 	descricion: string;
 	prezo: number;
 	idade_recomendada: number;
@@ -33,45 +30,45 @@ interface Xogo {
 	desarrolladora: string;
 }
 
+interface Xenero {
+	id: number;
+	xenero: string;
+}
+
+interface Plataforma {
+	id: number;
+	plataforma: string;
+}
+
 interface AccesibilidadeType {
 	id: number;
 	nome_accesibilidade: string;
-}
-
-interface Xenero {
-	id: number;
-	nome_xenero: string;
-}
-interface Comentario {
-	id: number;
-	comentario: string;
-	likes: number;
-	dislikes: number;
-	usuario: number;
-	videoxogo: number;
-}
-interface Plataforma {
-	id: number;
-	nome_plataforma: string;
+	descricion: string;
 }
 
 interface Usuario {
 	id: number;
-	favoritos: number[];
-	preferencias: Array<AccesibilidadeType>;
 	nome: string;
 	email: string;
-	imaxe_user: string | null;
+	favoritos: number[];
 	admin: boolean;
+	imaxe_user: string | null;
+}
+
+interface Comentario {
+	id: number;
+	comentario: string;
+	usuario: number;
+	videoxogo: number;
 }
 
 function App() {
 	const [tab, setTab] = useState<string>('inicio');
-	const [xogos, setXogos] = useState<Xogo[]>([]);
-	const [users, setUsers] = useState<Usuario[]>([]);
-	const [userId, setUserId] = useState(0);
 	const [showLogin, setShowLogin] = useState(false);
+	const [userId, setUserId] = useState<number>(0);
+	const [users, setUsers] = useState<Usuario[]>([]);
 	const [selectedGame, setSelectedGame] = useState<number | null>(null);
+	const [xogos, setXogos] = useState<Xogo[]>([]);
 	const [xeneros, setXeneros] = useState<Xenero[]>([]);
 	const [plataformas, setPlataformas] = useState<Plataforma[]>([]);
 	const [accesibilidades, setAccesibilidades] = useState<
@@ -83,29 +80,39 @@ function App() {
 	// Atallos de teclado
 	useEffect(() => {
 		const handleKeyDown = (event: KeyboardEvent) => {
-			if (event.ctrlKey && event.key.toLowerCase() === 'j') {
+			if (event.ctrlKey && event.altKey && !event.shiftKey) {
 				event.preventDefault();
-				setTab('accesibilidade');
-			} else if (event.ctrlKey && event.key.toLowerCase() === 'h') {
-				event.preventDefault();
-				setTab('inicio');
-			} else if (event.ctrlKey && event.key.toLowerCase() === 'c') {
-				event.preventDefault();
-				setTab('catalogo');
-			} else if (
-				event.ctrlKey &&
-				event.key.toLowerCase() === 'a' &&
-				!userId
-			) {
-				event.preventDefault();
-				setTab('perfil');
-			} else if (
-				event.ctrlKey &&
-				event.key.toLowerCase() === 'ñ' &&
-				!userId
-			) {
-				event.preventDefault();
-				handleLoginClick();
+
+				const keyPressed = event.key.toLowerCase();
+
+				switch (keyPressed) {
+					case '1':
+						setTab('inicio');
+						break;
+					case '2':
+						setTab('catalogo');
+						break;
+					case '3':
+						setTab('accesibilidade');
+						break;
+					case '4':
+						if (userId != 0) {
+							setTab('perfil');
+						}
+						break;
+					case '5':
+						if (!userId) {
+							handleLoginClick();
+						}
+						break;
+					case '6':
+						if (userId != 0) {
+							setTab('propostas');
+						}
+						break;
+					default:
+						break;
+				}
 			}
 		};
 
@@ -151,11 +158,9 @@ function App() {
 
 		// Comproba usuario
 		const savedUserId = localStorage.getItem('userId');
-		console.log('ID de usuario guardado:', savedUserId);
 
 		if (savedUserId) {
 			const userId = parseInt(savedUserId);
-			console.log('ID de usuario parseado:', userId);
 			setUserId(userId);
 			// Petición sobre o usuario específico se xa existe no local storage
 			axios
@@ -262,12 +267,78 @@ function App() {
 		switch (tab) {
 			case 'inicio':
 				return (
-					<div className="flex flex-col items-center justify-center min-h-screen p-4">
-						<h1 className="text-4xl font-bold mb-4">
-							Benvida a TodasXogan
-						</h1>
-						{/* TODO poñer intro en orde */}
-						<p className="text-xl text-center max-w-2xl"></p>
+					<div className="hero bg-base-200 h-screen">
+						<div className="hero-content flex-col lg:flex-row p-4 h-full">
+							<div className="max-w-md flex flex-col justify-center">
+								<h1 className="text-4xl lg:text-5xl font-bold">
+									Benvida{' '}
+									{userId !== 0
+										? users[0]?.nome
+										: 'a todas Xogan!'}
+								</h1>
+								<p className="py-4">
+									Damosche á benvida ao teu catálogo de
+									videoxogos accesibles!
+								</p>
+								<button
+									onClick={() => setTab('catalogo')}
+									className="btn btn-primary w-fit"
+								>
+									Ver catálogo
+								</button>
+								<h2 className="text-xl lg:text-2xl font-bold mt-8 mb-2">
+									Xogos destacados
+								</h2>
+								<div className="logos group relative overflow-hidden whitespace-nowrap py-2 [mask-image:_linear-gradient(to_right,_transparent_0,_white_128px,white_calc(100%-128px),_transparent_100%)]">
+									<div className="animate-slide-left-infinite group-hover:animation-pause inline-block w-max">
+										{xogos.slice(0, 6).map((xogo) => (
+											<div
+												key={xogo.id}
+												className="mx-2 inline-block"
+											>
+												<div className="card w-36 lg:w-48 bg-base-100 shadow-xl">
+													<figure>
+														<img
+															src={xogo.caratula}
+															alt={`Carátula de ${xogo.titulo}`}
+															className="h-24 lg:h-32 w-full object-cover"
+														/>
+													</figure>
+													<div className="card-body p-2 lg:p-4">
+														<h3 className="card-title text-xs lg:text-sm">
+															{xogo.titulo}
+														</h3>
+													</div>
+												</div>
+											</div>
+										))}
+									</div>
+									<div className="animate-slide-left-infinite group-hover:animation-pause inline-block w-max">
+										{xogos.slice(0, 6).map((xogo) => (
+											<div
+												key={`duplicate-${xogo.id}`}
+												className="mx-2 inline-block"
+											>
+												<div className="card w-36 lg:w-48 bg-base-100 shadow-xl">
+													<figure>
+														<img
+															src={xogo.caratula}
+															alt={`Carátula de ${xogo.titulo}`}
+															className="h-24 lg:h-32 w-full object-cover"
+														/>
+													</figure>
+													<div className="card-body p-2 lg:p-4">
+														<h3 className="card-title text-xs lg:text-sm">
+															{xogo.titulo}
+														</h3>
+													</div>
+												</div>
+											</div>
+										))}
+									</div>
+								</div>
+							</div>
+						</div>
 					</div>
 				);
 			case 'catalogo':
@@ -297,6 +368,8 @@ function App() {
 							onVerDetalles={handleVerDetalles}
 							onToggleFavorito={handleToggleFavorito}
 							userName={users.find((u) => u.id === userId)?.nome}
+							accesibilidades={accesibilidades}
+							userId={userId}
 						/>
 					</div>
 				);

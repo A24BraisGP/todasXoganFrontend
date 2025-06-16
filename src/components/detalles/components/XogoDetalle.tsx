@@ -36,6 +36,7 @@ interface Xogo {
 	idade_recomendada: number;
 	xenero: Array<number>;
 	desarrolladora: string;
+	caratula: string;
 }
 
 const XogoDetalle = ({ xogoId, onVolver, userId }: XogoDetalleProps) => {
@@ -51,31 +52,39 @@ const XogoDetalle = ({ xogoId, onVolver, userId }: XogoDetalleProps) => {
 	const cleanInput = (input: string) => {
 		return input.replace(/(<([^>]+)>)/gi, '');
 	};
+
 	async function handleClick() {
-		axios.post(
-			'/api/comentarios/',
-			{
-				usuario: userId,
-				videoxogo: xogoId,
-				comentario: cleanInput(newComment),
-				likes: 0,
-				dislikes: 0,
-			},
-			{
-				headers: {
-					Accept: 'application/json',
-					Authorization: `Bearer ${localStorage.getItem('token')}`,
+		try {
+			const response = await axios.post(
+				'/api/comentarios/',
+				{
+					usuario: userId,
+					videoxogo: xogoId,
+					comentario: cleanInput(newComment),
+					likes: 0,
+					dislikes: 0,
 				},
-			}
-		);
-		// Cargar los comentarios del juego
-		setCargandoComentarios(true);
-		const comentariosResponse = await axios.get('/api/comentarios/');
-		const comentariosFiltrados = comentariosResponse.data.filter(
-			(comentario: Comentario) => comentario.videoxogo === xogoId
-		);
-		setComentarios(comentariosFiltrados);
-		setCargandoComentarios(false);
+				{
+					headers: {
+						Accept: 'application/json',
+						Authorization: `Bearer ${localStorage.getItem(
+							'token'
+						)}`,
+					},
+				}
+			);
+
+			// Actualizar el estado de comentarios inmediatamente con el nuevo comentario
+			setComentarios((prevComentarios) => [
+				...prevComentarios,
+				response.data,
+			]);
+
+			// Limpiar el input
+			setNewComment('');
+		} catch (error) {
+			console.error('Error al enviar el comentario:', error);
+		}
 	}
 
 	useEffect(() => {
@@ -116,12 +125,16 @@ const XogoDetalle = ({ xogoId, onVolver, userId }: XogoDetalleProps) => {
 		};
 
 		fetchData();
-	}, [xogoId]);
+	}, [xogoId, userId]);
 
 	if (!xogo) {
 		return (
 			<div className="flex items-center justify-center min-h-screen">
-				<span className="loading loading-spinner loading-lg"></span>
+				<span
+					className="loading loading-spinner loading-lg"
+					role="status"
+					aria-label="Cargando detalles do xogo"
+				></span>
 			</div>
 		);
 	}
@@ -162,12 +175,21 @@ const XogoDetalle = ({ xogoId, onVolver, userId }: XogoDetalleProps) => {
 					</button>
 
 					<div className="bg-base-200 rounded-lg p-6 shadow-lg">
-						<h1 className="text-4xl font-bold mb-6 text-center">
-							{xogo.titulo}
-						</h1>
+						<div className="flex items-center justify-between mb-6">
+							<h1 className="text-4xl font-bold text-center">
+								{xogo.titulo}
+							</h1>
+						</div>
 
 						<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 							<div className="space-y-4">
+								<div className="flex justify-center mb-6">
+									<img
+										src={xogo.caratula}
+										alt={`Carátula de ${xogo.titulo}`}
+										className="w-64 h-64 object-cover rounded-lg shadow-lg"
+									/>
+								</div>
 								<div>
 									<h2 className="text-xl font-semibold mb-2">
 										Descrición
@@ -275,19 +297,35 @@ const XogoDetalle = ({ xogoId, onVolver, userId }: XogoDetalleProps) => {
 							)}
 							{cargandoComentarios ? (
 								<div className="flex justify-center">
-									<div className="flex w-52 flex-col gap-4">
+									<div
+										className="flex w-52 flex-col gap-4"
+										role="status"
+										aria-label="Cargando comentarios"
+									>
 										<div className="flex items-center gap-4">
-											<div className="skeleton h-16 w-16 shrink-0 rounded-full"></div>
+											<div
+												className="skeleton h-16 w-16 shrink-0 rounded-full"
+												aria-hidden="true"
+											></div>
 											<div className="flex flex-col gap-4">
-												<div className="skeleton h-4 w-20"></div>
-												<div className="skeleton h-4 w-28"></div>
+												<div
+													className="skeleton h-4 w-20"
+													aria-hidden="true"
+												></div>
+												<div
+													className="skeleton h-4 w-28"
+													aria-hidden="true"
+												></div>
 											</div>
 										</div>
-										<div className="skeleton h-32 w-full"></div>
+										<div
+											className="skeleton h-32 w-full"
+											aria-hidden="true"
+										></div>
 									</div>
 								</div>
-							) : comentarios.length === 0 ? (
-								'Se a primeira en deixar un comentario!'
+							) : comentarios.length === 0 && userId == 0 ? (
+								'Inicia sesión e deixa o teu comentario! '
 							) : (
 								<div className="space-y-4">
 									{comentarios.map((comentario, index) => (

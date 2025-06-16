@@ -58,7 +58,7 @@ const Sidebar = ({ tab, onClick, isLoggedIn }: SidebarProps) => {
 				role="navigation"
 				aria-label="Menú principal"
 			>
-				<ul className="menu" role="menubar">
+				<ul className="menu lg:sticky lg:top-4" role="menubar">
 					{tabs.map((t) => (
 						<li key={t.id} role="none">
 							<a
