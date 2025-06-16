@@ -230,7 +230,7 @@ const XogoDetalle = ({ xogoId, onVolver, userId }: XogoDetalleProps) => {
 
 						<div className="mt-8">
 							<h2 className="text-2xl font-semibold mb-4">Comentarios</h2>
-							{userId != 0 && (
+							{userId != 0 ? (
 								<fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4">
 									<legend className="fieldset-legend">
 										Engade o teu comentario
@@ -248,6 +248,8 @@ const XogoDetalle = ({ xogoId, onVolver, userId }: XogoDetalleProps) => {
 										</button>
 									</div>
 								</fieldset>
+							) : (
+								'Inicia sesión e deixa o teu comentario! '
 							)}
 							{cargandoComentarios ? (
 								<div className="flex justify-center">
@@ -278,8 +280,6 @@ const XogoDetalle = ({ xogoId, onVolver, userId }: XogoDetalleProps) => {
 										></div>
 									</div>
 								</div>
-							) : userId == 0 ? (
-								'Inicia sesión e deixa o teu comentario! '
 							) : (
 								<div className="space-y-4">
 									{comentarios.map((comentario, index) => (
