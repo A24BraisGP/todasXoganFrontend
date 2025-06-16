@@ -26,6 +26,7 @@ interface Plataforma {
 interface Accesibilidade {
 	id: number;
 	nome_accesibilidade: string;
+	descricion: string;
 }
 
 interface CatalogoProps {
@@ -37,6 +38,12 @@ interface CatalogoProps {
 	onToggleFavorito: (id: number) => void;
 	favoritos: number[];
 	userId: number;
+	comentarios: Array<{
+		id: number;
+		comentario: string;
+		usuario: number;
+		videoxogo: number;
+	}>;
 }
 
 const Catalogo = ({
@@ -48,6 +55,7 @@ const Catalogo = ({
 	onToggleFavorito,
 	favoritos,
 	userId,
+	comentarios,
 }: CatalogoProps) => {
 	const [filtroAccesibilidade, setFiltroAccesibilidad] = useState<string>('');
 	const [filtroXenero, setFiltroGenero] = useState<string>('');
@@ -117,6 +125,14 @@ const Catalogo = ({
 				if (aEsFavorito && !bEsFavorito) return -1;
 				if (!aEsFavorito && bEsFavorito) return 1;
 				return 0;
+			case 'comentarios':
+				const comentariosA = comentarios.filter(
+					(c) => c.videoxogo === a.id
+				).length;
+				const comentariosB = comentarios.filter(
+					(c) => c.videoxogo === b.id
+				).length;
+				return comentariosB - comentariosA;
 			default:
 				return 0;
 		}
@@ -252,6 +268,7 @@ const Catalogo = ({
 								Prezo: Maior a Menor
 							</option>
 							<option value="favoritos">Favoritos</option>
+							<option value="comentarios">Máis comentados</option>
 						</select>
 					</div>
 				</div>
