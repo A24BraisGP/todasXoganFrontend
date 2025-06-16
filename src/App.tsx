@@ -280,12 +280,22 @@ function App() {
 									Damosche á benvida ao teu catálogo de
 									videoxogos accesibles!
 								</p>
-								<button
-									onClick={() => setTab('catalogo')}
-									className="btn btn-primary w-fit"
-								>
-									Ver catálogo
-								</button>
+								<div className="flex w-full">
+									<button
+										onClick={() => setTab('catalogo')}
+										className="btn btn-primary w-fit"
+									>
+										Ver catálogo
+									</button>
+
+									<div className="divider divider-primary divider-horizontal"></div>
+									<button
+										onClick={() => setTab('accesibilidade')}
+										className="btn btn-secondary w-fit"
+									>
+										Accesibilidade
+									</button>
+								</div>
 								<h2 className="text-xl lg:text-2xl font-bold mt-8 mb-2">
 									Xogos destacados
 								</h2>
