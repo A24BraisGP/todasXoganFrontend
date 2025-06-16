@@ -43,9 +43,7 @@ const XogoDetalle = ({ xogoId, onVolver, userId }: XogoDetalleProps) => {
 	const [xogo, setXogo] = useState<Xogo | null>(null);
 	const [plataformas, setPlataformas] = useState<Plataforma[]>([]);
 	const [comentarios, setComentarios] = useState<Comentario[]>([]);
-	const [accesibilidades, setAccesibilidades] = useState<Accesibilidade[]>(
-		[]
-	);
+	const [accesibilidades, setAccesibilidades] = useState<Accesibilidade[]>([]);
 	const [cargandoComentarios, setCargandoComentarios] = useState(true);
 	const [newComment, setNewComment] = useState<string>('');
 
@@ -67,18 +65,13 @@ const XogoDetalle = ({ xogoId, onVolver, userId }: XogoDetalleProps) => {
 				{
 					headers: {
 						Accept: 'application/json',
-						Authorization: `Bearer ${localStorage.getItem(
-							'token'
-						)}`,
+						Authorization: `Bearer ${localStorage.getItem('token')}`,
 					},
 				}
 			);
 
 			// Actualizar el estado de comentarios inmediatamente con el nuevo comentario
-			setComentarios((prevComentarios) => [
-				...prevComentarios,
-				response.data,
-			]);
+			setComentarios((prevComentarios) => [...prevComentarios, response.data]);
 
 			// Limpiar el input
 			setNewComment('');
@@ -91,15 +84,11 @@ const XogoDetalle = ({ xogoId, onVolver, userId }: XogoDetalleProps) => {
 		const fetchData = async () => {
 			try {
 				// Cargar el juego
-				const xogoResponse = await axios.get(
-					`/api/videoxogos/${xogoId}/`
-				);
+				const xogoResponse = await axios.get(`/api/videoxogos/${xogoId}/`);
 				setXogo(xogoResponse.data);
 
 				// Cargar todas las plataformas
-				const plataformasResponse = await axios.get(
-					'/api/plataformas/'
-				);
+				const plataformasResponse = await axios.get('/api/plataformas/');
 				setPlataformas(plataformasResponse.data);
 
 				// Cargar todas las accesibilidades
@@ -110,9 +99,7 @@ const XogoDetalle = ({ xogoId, onVolver, userId }: XogoDetalleProps) => {
 
 				// Cargar los comentarios del juego
 				setCargandoComentarios(true);
-				const comentariosResponse = await axios.get(
-					'/api/comentarios/'
-				);
+				const comentariosResponse = await axios.get('/api/comentarios/');
 				const comentariosFiltrados = comentariosResponse.data.filter(
 					(comentario: Comentario) => comentario.videoxogo === xogoId
 				);
@@ -176,9 +163,7 @@ const XogoDetalle = ({ xogoId, onVolver, userId }: XogoDetalleProps) => {
 
 					<div className="bg-base-200 rounded-lg p-6 shadow-lg">
 						<div className="flex items-center justify-between mb-6">
-							<h1 className="text-4xl font-bold text-center">
-								{xogo.titulo}
-							</h1>
+							<h1 className="text-4xl font-bold text-center">{xogo.titulo}</h1>
 						</div>
 
 						<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -191,18 +176,12 @@ const XogoDetalle = ({ xogoId, onVolver, userId }: XogoDetalleProps) => {
 									/>
 								</div>
 								<div>
-									<h2 className="text-xl font-semibold mb-2">
-										Descrición
-									</h2>
-									<p className="text-base-content/80">
-										{xogo.descricion}
-									</p>
+									<h2 className="text-xl font-semibold mb-2">Descrición</h2>
+									<p className="text-base-content/80">{xogo.descricion}</p>
 								</div>
 
 								<div>
-									<h2 className="text-xl font-semibold mb-2">
-										Prezo
-									</h2>
+									<h2 className="text-xl font-semibold mb-2">Prezo</h2>
 									<p className="text-2xl font-bold text-primary">
 										{xogo.prezo}€
 									</p>
@@ -212,30 +191,19 @@ const XogoDetalle = ({ xogoId, onVolver, userId }: XogoDetalleProps) => {
 									<h2 className="text-xl font-semibold mb-2">
 										Idade recomendada
 									</h2>
-									<p className="text-lg">
-										+{xogo.idade_recomendada} anos
-									</p>
+									<p className="text-lg">+{xogo.idade_recomendada} anos</p>
 								</div>
 
 								<div>
-									<h2 className="text-xl font-semibold mb-2">
-										Desarrolladora
-									</h2>
-									<p className="text-lg">
-										{xogo.desarrolladora}
-									</p>
+									<h2 className="text-xl font-semibold mb-2">Desarrolladora</h2>
+									<p className="text-lg">{xogo.desarrolladora}</p>
 								</div>
 
 								<div>
-									<h2 className="text-xl font-semibold mb-2">
-										Plataformas
-									</h2>
+									<h2 className="text-xl font-semibold mb-2">Plataformas</h2>
 									<div className="flex flex-wrap gap-2">
 										{plataformasXogo.map((plataforma) => (
-											<span
-												key={plataforma.id}
-												className="badge badge-primary"
-											>
+											<span key={plataforma.id} className="badge badge-primary">
 												{plataforma.plataforma}
 											</span>
 										))}
@@ -244,18 +212,11 @@ const XogoDetalle = ({ xogoId, onVolver, userId }: XogoDetalleProps) => {
 							</div>
 
 							<div>
-								<h2 className="text-xl font-semibold mb-2">
-									Accesibilidades
-								</h2>
+								<h2 className="text-xl font-semibold mb-2">Accesibilidades</h2>
 								<div className="space-y-2">
 									{accesibilidadesXogo.map((acc) => (
-										<div
-											key={acc.id}
-											className="bg-base-300 p-3 rounded-lg"
-										>
-											<h3 className="font-medium">
-												{acc.nome_accesibilidade}
-											</h3>
+										<div key={acc.id} className="bg-base-300 p-3 rounded-lg">
+											<h3 className="font-medium">{acc.nome_accesibilidade}</h3>
 											<p className="text-sm text-base-content/70">
 												{acc.descricion}
 											</p>
@@ -268,9 +229,7 @@ const XogoDetalle = ({ xogoId, onVolver, userId }: XogoDetalleProps) => {
 						{/* Sección de comentarios */}
 
 						<div className="mt-8">
-							<h2 className="text-2xl font-semibold mb-4">
-								Comentarios
-							</h2>
+							<h2 className="text-2xl font-semibold mb-4">Comentarios</h2>
 							{userId != 0 && (
 								<fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4">
 									<legend className="fieldset-legend">
@@ -282,14 +241,9 @@ const XogoDetalle = ({ xogoId, onVolver, userId }: XogoDetalleProps) => {
 											className="input join-item"
 											placeholder="Que opinas do xogo?"
 											value={newComment}
-											onChange={(e) =>
-												setNewComment(e.target.value)
-											}
+											onChange={(e) => setNewComment(e.target.value)}
 										/>
-										<button
-											className="btn join-item"
-											onClick={handleClick}
-										>
+										<button className="btn join-item" onClick={handleClick}>
 											Gardar
 										</button>
 									</div>
@@ -324,7 +278,7 @@ const XogoDetalle = ({ xogoId, onVolver, userId }: XogoDetalleProps) => {
 										></div>
 									</div>
 								</div>
-							) : comentarios.length === 0 && userId == 0 ? (
+							) : userId == 0 ? (
 								'Inicia sesión e deixa o teu comentario! '
 							) : (
 								<div className="space-y-4">
@@ -333,9 +287,7 @@ const XogoDetalle = ({ xogoId, onVolver, userId }: XogoDetalleProps) => {
 											<Comentario
 												key={comentario.id}
 												id={comentario.id}
-												comentario={
-													comentario.comentario
-												}
+												comentario={comentario.comentario}
 												usuario={comentario.usuario}
 												videoxogo={comentario.videoxogo}
 											/>
