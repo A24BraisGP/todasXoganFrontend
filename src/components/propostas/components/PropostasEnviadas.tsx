@@ -38,9 +38,7 @@ const PropostasEnviadas = () => {
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 	const [usuarios, setUsuarios] = useState<{ [key: number]: string }>({});
-	const [accesibilidades, setAccesibilidades] = useState<Accesibilidade[]>(
-		[]
-	);
+	const [accesibilidades, setAccesibilidades] = useState<Accesibilidade[]>([]);
 
 	useEffect(() => {
 		cargarPropostas();
@@ -80,9 +78,7 @@ const PropostasEnviadas = () => {
 			setPropostas(response.data);
 
 			// Obtener los nombres de usuario para cada propuesta
-			const userIds = [
-				...new Set(response.data.map((p) => p.usuario_id)),
-			];
+			const userIds = [...new Set(response.data.map((p) => p.usuario_id))];
 			const usuariosTemp: { [key: number]: string } = {};
 
 			for (const id of userIds) {
@@ -154,18 +150,14 @@ const PropostasEnviadas = () => {
 				{
 					headers: {
 						'Content-Type': 'multipart/form-data',
-						Authorization: `Bearer ${localStorage.getItem(
-							'token'
-						)}`,
+						Authorization: `Bearer ${localStorage.getItem('token')}`,
 					},
 					withCredentials: true,
 				}
 			);
 
 			if (xogoResponse.status === 200 || xogoResponse.status === 201) {
-				console.log(
-					'Actualizando estado de la propuesta a APROBADA...'
-				);
+				console.log('Actualizando estado de la propuesta a APROBADA...');
 
 				try {
 					const response = await axios.patch(
@@ -175,9 +167,7 @@ const PropostasEnviadas = () => {
 							headers: {
 								'Content-Type': 'application/json',
 								Accept: 'application/json',
-								Authorization: `Bearer ${localStorage.getItem(
-									'token'
-								)}`,
+								Authorization: `Bearer ${localStorage.getItem('token')}`,
 							},
 							withCredentials: true,
 						}
@@ -187,17 +177,12 @@ const PropostasEnviadas = () => {
 
 					if (response.status === 200) {
 						// Eliminar la propuesta de la lista (solo visualmente)
-						setPropostas(
-							propostas.filter((p) => p.id !== proposta.id)
-						);
+						setPropostas(propostas.filter((p) => p.id !== proposta.id));
 					} else {
 						setError('Erro ao actualizar o estado da proposta');
 					}
 				} catch (updateError) {
-					console.error(
-						'Error al actualizar el estado:',
-						updateError
-					);
+					console.error('Error al actualizar el estado:', updateError);
 					if (axios.isAxiosError(updateError)) {
 						console.error('Datos del error:', {
 							status: updateError.response?.status,
@@ -234,9 +219,7 @@ const PropostasEnviadas = () => {
 					headers: {
 						'Content-Type': 'application/json',
 						Accept: 'application/json',
-						Authorization: `Bearer ${localStorage.getItem(
-							'token'
-						)}`,
+						Authorization: `Bearer ${localStorage.getItem('token')}`,
 					},
 					withCredentials: true,
 				}
@@ -302,12 +285,9 @@ const PropostasEnviadas = () => {
 							/>
 						))}
 				</div>
-				{propostas.filter((p) => p.estado === 'PENDENTE').length ===
-					0 && (
+				{propostas.filter((p) => p.estado === 'PENDENTE').length === 0 && (
 					<div className="text-center mt-4">
-						<p className="text-lg text-gray-500">
-							Non hai propostas pendentes
-						</p>
+						<p className="text-lg text-gray-500">Non hai propostas pendentes</p>
 					</div>
 				)}
 			</div>
@@ -330,40 +310,9 @@ const PropostasEnviadas = () => {
 							/>
 						))}
 				</div>
-				{propostas.filter((p) => p.estado === 'APROBADA').length ===
-					0 && (
+				{propostas.filter((p) => p.estado === 'APROBADA').length === 0 && (
 					<div className="text-center mt-4">
-						<p className="text-lg text-gray-500">
-							Non hai propostas aprobadas
-						</p>
-					</div>
-				)}
-			</div>
-
-			{/* Propostas Rechazadas */}
-			<div className="mb-8">
-				<h3 className="text-xl font-semibold mb-4 text-error">
-					Propostas Rechazadas
-				</h3>
-				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-					{propostas
-						.filter((proposta) => proposta.estado === 'REXEITADA')
-						.map((proposta) => (
-							<PropostaCard
-								key={proposta.id}
-								proposta={proposta}
-								showActions={false}
-								userName={usuarios[proposta.usuario_id]}
-								accesibilidades={accesibilidades}
-							/>
-						))}
-				</div>
-				{propostas.filter((p) => p.estado === 'REXEITADA').length ===
-					0 && (
-					<div className="text-center mt-4">
-						<p className="text-lg text-gray-500">
-							Non hai propostas rechazadas
-						</p>
+						<p className="text-lg text-gray-500">Non hai propostas aprobadas</p>
 					</div>
 				)}
 			</div>
