@@ -71,9 +71,9 @@ function App() {
 	const [xogos, setXogos] = useState<Xogo[]>([]);
 	const [xeneros, setXeneros] = useState<Xenero[]>([]);
 	const [plataformas, setPlataformas] = useState<Plataforma[]>([]);
-	const [accesibilidades, setAccesibilidades] = useState<
-		AccesibilidadeType[]
-	>([]);
+	const [accesibilidades, setAccesibilidades] = useState<AccesibilidadeType[]>(
+		[]
+	);
 	const [comentarios, setComentarios] = useState<Comentario[]>([]);
 	console.log('showLogin -> ' + showLogin);
 	console.log('comentarios -> ' + comentarios);
@@ -137,9 +137,7 @@ function App() {
 		axios
 			.get('/api/plataformas/')
 			.then((response) => setPlataformas(response.data))
-			.catch((error) =>
-				console.error('Error ao cargar plataformas:', error)
-			);
+			.catch((error) => console.error('Error ao cargar plataformas:', error));
 
 		// Petición para obtener accesibilidades
 		axios
@@ -222,9 +220,7 @@ function App() {
 					`/api/favoritos/delete/?usuario=${userId}&videoxogo=${xogoId}`,
 					{
 						headers: {
-							Authorization: `Bearer ${localStorage.getItem(
-								'token'
-							)}`,
+							Authorization: `Bearer ${localStorage.getItem('token')}`,
 						},
 					}
 				);
@@ -237,9 +233,7 @@ function App() {
 					},
 					{
 						headers: {
-							Authorization: `Bearer ${localStorage.getItem(
-								'token'
-							)}`,
+							Authorization: `Bearer ${localStorage.getItem('token')}`,
 						},
 						withCredentials: true,
 					}
@@ -271,14 +265,13 @@ function App() {
 						<div className="hero-content flex-col lg:flex-row p-4 h-full">
 							<div className="max-w-md flex flex-col justify-center">
 								<h1 className="text-4xl lg:text-5xl font-bold">
-									Benvida{' '}
+									Boas{' '}
 									{userId !== 0
-										? users[0]?.nome
-										: 'a todas Xogan!'}
+										? users[0]?.nome + '!'
+										: 'Benvida a todas Xogan!'}
 								</h1>
 								<p className="py-4">
-									Damosche á benvida ao teu catálogo de
-									videoxogos accesibles!
+									Damosche á benvida ao teu catálogo de videoxogos accesibles!
 								</p>
 								<div className="flex w-full">
 									<button
@@ -302,10 +295,7 @@ function App() {
 								<div className="logos group relative overflow-hidden whitespace-nowrap py-2 [mask-image:_linear-gradient(to_right,_transparent_0,_white_128px,white_calc(100%-128px),_transparent_100%)]">
 									<div className="animate-slide-left-infinite group-hover:animation-pause inline-block w-max">
 										{xogos.slice(0, 6).map((xogo) => (
-											<div
-												key={xogo.id}
-												className="mx-2 inline-block"
-											>
+											<div key={xogo.id} className="mx-2 inline-block">
 												<div className="card w-36 lg:w-48 bg-base-100 shadow-xl">
 													<figure>
 														<img
@@ -371,10 +361,7 @@ function App() {
 					<div className="flex flex-col items-center w-full p-4">
 						<Favoritos
 							xogos={xogos}
-							favoritos={
-								users.find((u) => u.id === userId)?.favoritos ||
-								[]
-							}
+							favoritos={users.find((u) => u.id === userId)?.favoritos || []}
 							onVerDetalles={handleVerDetalles}
 							onToggleFavorito={handleToggleFavorito}
 							userName={users.find((u) => u.id === userId)?.nome}
@@ -427,9 +414,7 @@ function App() {
 				onLoginClick={handleLoginClick}
 				isLoggedIn={!!userId}
 				userName={users.find((u) => u.id === userId)?.nome}
-				userImage={
-					users.find((u) => u.id === userId)?.imaxe_user || undefined
-				}
+				userImage={users.find((u) => u.id === userId)?.imaxe_user || undefined}
 				onHomeClick={() => setTab('inicio')}
 				onLogout={handleLogout}
 				onAccesibilidadClick={handleAccesibilidadClick}
