@@ -324,7 +324,7 @@ const PropostaForm = () => {
 			<div className="card w-full max-w-2xl bg-base-200 shadow-xl">
 				<div className="card-body p-8">
 					<h2 className="card-title text-2xl font-bold text-center mb-8">
-						Propor Novo Xogo
+						Con este formulario podes propoñer unha entrada nova no catálogo
 					</h2>
 					{error && (
 						<Alert onClose={() => setError('')}>{error}</Alert>
